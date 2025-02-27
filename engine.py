@@ -3,6 +3,7 @@ from typing import Set, Iterable, Any
 from tcod.context import Context
 from tcod.console import Console
 from tcod.map import compute_fov
+from tcod import FOV_SYMMETRIC_SHADOWCAST
 
 from actions import EscapeAction, MovementAction
 from entity import Entity
@@ -39,7 +40,8 @@ class Engine:
         self.game_map.visible[:] = compute_fov(
             self.game_map.tiles['transparent'],
             (self.player.x, self.player.y),
-            radius=8 #should make this a variable later. flashlight/torch etc
+            radius=8, #should make this a variable later. flashlight/torch etc
+            # algorithm=FOV_SYMMETRIC_SHADOWCAST <-- play with this value!!!
         )
         self.game_map.explored |= self.game_map.visible
             
