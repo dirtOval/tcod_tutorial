@@ -28,8 +28,10 @@ class Engine:
         # self.update_fov()
 
     def handle_enemy_turns(self) -> None:
-        for entity in self.game_map.entities - {self.player}:
-            print(f'The {entity.name} does nothing on its turn :P')
+        for entity in set(self.game_map.actors) - {self.player}:
+            # print(f'The {entity.name} does nothing on its turn :P')
+            if entity.ai:
+                entity.ai.perform()
       
     # def handle_events(self, events: Iterable[Any]) -> None:
     #     for event in events:
