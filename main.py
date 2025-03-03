@@ -1,6 +1,7 @@
 import tcod
 import copy
 
+import color
 from engine import Engine
 import entity_factories
 from procgen import generate_dungeon
@@ -14,7 +15,7 @@ def main() -> None:
 
   # GAME CONST VARIABLES
   map_width = 80
-  map_height = 45
+  map_height = 43
 
   room_max_size = 10
   room_min_size = 6
@@ -44,6 +45,10 @@ def main() -> None:
     engine=engine,
   )
   engine.update_fov()
+
+  engine.message_log.add_message(
+    'its dungeon time baybee oh YEAHHHHHHHH', color.welcome_text
+  )
 
   # engine = Engine(event_handler=event_handler, game_map=game_map, player=player)
 
