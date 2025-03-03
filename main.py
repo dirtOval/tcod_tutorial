@@ -61,31 +61,12 @@ def main() -> None:
   ) as context:
     root_console = tcod.console.Console(screen_width, screen_height, order='F')
     while True:
-      # root_console.print(x=player_x, y=player_y, string='@')
-      # root_console.print(x=player.x, y=player.y, string=player.char, fg=player.color)
-      engine.render(console=root_console, context=context)
-      engine.event_handler.handle_events()
-      # context.present(root_console)
-      # events = tcod.event.wait()
-
-      # engine.event_handler.handle_events(events)
-      # root_console.clear()
-
-      # for event in tcod.event.wait():
-      #   # if event.type == 'QUIT':
-      #   #   raise SystemExit()
-
-      #   action = event_handler.dispatch(event)
-
-      #   if action is None:
-      #     continue
-
-      #   if isinstance(action, MovementAction):
-      #     player_x += action.dx
-      #     player_y += action.dy
-
-      #   elif isinstance(action, EscapeAction):
-      #     raise SystemExit()
+      root_console.clear()
+      engine.event_handler.on_render(console=root_console)
+      context.present(root_console)
+      # engine.render(console=root_console, context=context)
+      engine.event_handler.handle_events(context)
+      # engine.event_handler.handle_events()
 
 #boilerplate to make sure main only runs when the script is called
 if __name__ == "__main__":
