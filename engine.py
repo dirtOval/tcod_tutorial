@@ -9,9 +9,7 @@ from tcod.console import Console
 from tcod.map import compute_fov
 # from tcod import FOV_SYMMETRIC_SHADOWCAST
 
-# from actions import EscapeAction, MovementAction
-# from entity import Entity
-# from game_map import GameMap
+import exceptions
 from input_handlers import MainGameEventHandler
 from message_log import MessageLog
 from render_functions import render_bar, render_names_at_mouse_location
@@ -37,18 +35,10 @@ class Engine:
         for entity in set(self.game_map.actors) - {self.player}:
             # print(f'The {entity.name} does nothing on its turn :P')
             if entity.ai:
-                entity.ai.perform()
-      
-    # def handle_events(self, events: Iterable[Any]) -> None:
-    #     for event in events:
-    #         action = self.event_handler.dispatch(event)
-
-    #         if action is None:
-    #             continue
-            
-    #         action.perform(self, self.player)
-    #         self.handle_enemy_turns()
-    #         self.update_fov()
+                try:
+                  entity.ai.perform()
+                except exceptions.Impossible:
+                    pass #plays dont need to know every time AI fails attempt
 
     def update_fov(self) -> None:
         self.game_map.visible[:] = compute_fov(

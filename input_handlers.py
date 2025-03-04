@@ -4,7 +4,14 @@ from typing import Optional, TYPE_CHECKING
 
 import tcod.event
 
-from actions import Action, EscapeAction, BumpAction, WaitAction
+from actions import (
+  Action,
+  EscapeAction,
+  BumpAction,
+  WaitAction
+)
+import color
+import exceptions
 
 #find out wtf TYPE_CHECKING is
 if TYPE_CHECKING:
@@ -53,10 +60,28 @@ class EventHandler(tcod.event.EventDispatch[Action]):
   # def handle_events(self) -> None:
   #   raise NotImplementedError()
 
-  def handle_events(self, context: tcod.context.Context) -> None:
-    for event in tcod.event.wait():
-      context.convert_event(event)
-      self.dispatch(event)
+  def handle_events(self, event: tcod.event.Event) -> None:
+    self.handle_action(self.dispatch(event))
+  
+  def handle_action(self, action: Optional[Action]) -> bool:
+    if action is None:
+      return False
+    
+    try:
+      action.perform()
+    except exceptions.Impossible as exc:
+      self.engine.message_log.add_message(exc.args[0], color.impossible)
+      return False
+    
+    self.engine.handle_enemy_turns()
+
+    self.engine.update_fov()
+    return True
+  
+  # def handle_events(self, context: tcod.context.Context) -> None:
+  #   for event in tcod.event.wait():
+  #     context.convert_event(event)
+  #     self.dispatch(event)
 
   def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
     if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
@@ -69,18 +94,18 @@ class EventHandler(tcod.event.EventDispatch[Action]):
     self.engine.render(console)
 
 class MainGameEventHandler(EventHandler):
-  def handle_events(self, context: tcod.context.Context) -> None:
-    for event in tcod.event.wait():
-      context.convert_event(event)
-      action = self.dispatch(event)
+  # def handle_events(self, context: tcod.context.Context) -> None:
+  #   for event in tcod.event.wait():
+  #     context.convert_event(event)
+  #     action = self.dispatch(event)
 
-      if action is None:
-        continue
+  #     if action is None:
+  #       continue
 
-      action.perform()
+  #     action.perform()
 
-      self.engine.handle_enemy_turns()
-      self.engine.update_fov()
+  #     self.engine.handle_enemy_turns()
+  #     self.engine.update_fov()
 
   # def ev_quit(self, event: tcod.event.KeyDown) -> Optional[Action]:
   #   raise SystemExit()
@@ -116,24 +141,27 @@ class MainGameEventHandler(EventHandler):
     return action
   
 class GameOverEventHandler(EventHandler):
-  def handle_events(self, context: tcod.context.Context) -> None:
-    for event in tcod.event.wait():
-      action = self.dispatch(event)
+  # def handle_events(self, context: tcod.context.Context) -> None:
+  #   for event in tcod.event.wait():
+  #     action = self.dispatch(event)
 
-      if action is None:
-        continue
+  #     if action is None:
+  #       continue
 
-      action.perform()
+  #     action.perform()
 
-  def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
-    action: Optional[Action] = None
+  # def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+  #   action: Optional[Action] = None
 
-    key = event.sym
+  #   key = event.sym
 
-    if key == tcod.event.K_ESCAPE:
-      action = EscapeAction(self.engine.player)
+  #   if key == tcod.event.K_ESCAPE:
+  #     action = EscapeAction(self.engine.player)
 
-    return action
+  #   return action
+  def ev_keydown(self, event: tcod.event.KeyDown) -> None:
+    if event.sym == tcod.event.K_ESCAPE:
+      raise SystemExit()
   
 CURSOR_Y_KEYS = {
     tcod.event.K_UP: -1,
