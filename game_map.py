@@ -28,6 +28,10 @@ class GameMap:
     )
 
   @property
+  def gamemap(self) -> GameMap:
+    return self
+
+  @property
   def actors(self) -> Iterator[Actor]:
     yield from (
       entity
