@@ -12,6 +12,8 @@ from actions import (
   PickupAction,
   WaitAction
 )
+from entity import Item
+
 import color
 import exceptions
 
@@ -38,15 +40,15 @@ MOVE_KEYS = {
   tcod.event.K_KP_7: (-1, -1),
   tcod.event.K_KP_8: (0, -1),
   tcod.event.K_KP_9: (1, -1),
-  # Vi keys.
-  tcod.event.K_h: (-1, 0),
-  tcod.event.K_j: (0, 1),
-  tcod.event.K_k: (0, -1),
-  tcod.event.K_l: (1, 0),
-  tcod.event.K_y: (-1, -1),
-  tcod.event.K_u: (1, -1),
-  tcod.event.K_b: (-1, 1),
-  tcod.event.K_n: (1, 1),
+  # Vi keys. i don't like these lmao
+  # tcod.event.K_h: (-1, 0),
+  # tcod.event.K_j: (0, 1),
+  # tcod.event.K_k: (0, -1),
+  # tcod.event.K_l: (1, 0),
+  # tcod.event.K_y: (-1, -1),
+  # tcod.event.K_u: (1, -1),
+  # tcod.event.K_b: (-1, 1),
+  # tcod.event.K_n: (1, 1),
 }
 
 WAIT_KEYS = {
@@ -58,6 +60,7 @@ WAIT_KEYS = {
 CONFIRM_KEYS = {
     tcod.event.K_RETURN,
     tcod.event.K_KP_ENTER,
+    tcod.event.K_SPACE,
 }
 
 class EventHandler(tcod.event.EventDispatch[Action]):
@@ -255,6 +258,35 @@ class SingleRangedAttackHandler(SelectIndexHandler):
 
   def on_index_selected(self, x: int, y: int) -> Optional[Action]:
     return self.callback((x, y))
+  
+class AreaRangedAttackHandler(SelectIndexHandler):
+  def __init__(
+      self,
+      engine: Engine,
+      radius: int,
+      callback: Callable[[Tuple[int, int]], Optional[Action]],
+  ):
+    super().__init__(engine)
+
+    self.radius = radius
+    self.callback = callback
+
+  def on_render(self, console: tcod.Console) -> None:
+    super().on_render(console)
+
+    x, y = self.engine.mouse_location
+
+    console.draw_frame(
+      x=x - self.radius - 1,
+      y=y - self.radius - 1,
+      width=self.radius ** 2,
+      height=self.radius ** 2,
+      fg=color.red,
+      clear=False,
+    )
+
+  def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+    return self.callback((x, y))
 
 class MainGameEventHandler(EventHandler):
   # def handle_events(self, context: tcod.context.Context) -> None:
@@ -311,7 +343,7 @@ class MainGameEventHandler(EventHandler):
     elif key == tcod.event.K_d:
       self.engine.event_handler = InventoryDropHandler(self.engine)
 
-    elif key == tcod.event.K_SLASH:
+    elif key == tcod.event.K_l:
       self.engine.event_handler = LookHandler(self.engine)
 
     return action
