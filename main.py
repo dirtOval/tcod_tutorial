@@ -74,7 +74,7 @@ def main() -> None:
           engine.event_handler.handle_events(event)
       except Exception:
         traceback.print_exc()
-        engine.message_log.add_message(traceback.foramt_exc(), color.error)
+        engine.message_log.add_message(traceback.format_exc(), color.error)
       # engine.event_handler.handle_events(context)
 
 #boilerplate to make sure main only runs when the script is called
