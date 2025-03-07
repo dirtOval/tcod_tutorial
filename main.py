@@ -5,6 +5,8 @@ import traceback
 import color
 from engine import Engine
 import entity_factories
+import exceptions
+import input_handlers
 from procgen import generate_dungeon
 
 def main() -> None:
@@ -53,6 +55,8 @@ def main() -> None:
     'its dungeon time baybee oh YEAHHHHHHHH', color.welcome_text
   )
 
+  handler: input_handlers.BaseEventHandler = input_handlers.MainGameEventHandler(engine)
+
   # engine = Engine(event_handler=event_handler, game_map=game_map, player=player)
 
   with tcod.context.new_terminal(
@@ -63,20 +67,40 @@ def main() -> None:
     vsync=True,
   ) as context:
     root_console = tcod.console.Console(screen_width, screen_height, order='F')
-    while True:
-      root_console.clear()
-      engine.event_handler.on_render(console=root_console)
-      context.present(root_console)
+    # while True:
+    #   root_console.clear()
+    #   engine.event_handler.on_render(console=root_console)
+    #   context.present(root_console)
     
-      try:
-        for event in tcod.event.wait():
-          context.convert_event(event)
-          engine.event_handler.handle_events(event)
-      except Exception:
-        traceback.print_exc()
-        engine.message_log.add_message(traceback.format_exc(), color.error)
-      # engine.event_handler.handle_events(context)
+    #   try:
+    #     for event in tcod.event.wait():
+    #       context.convert_event(event)
+    #       engine.event_handler.handle_events(event)
+    #   except Exception:
+    #     traceback.print_exc()
+    #     engine.message_log.add_message(traceback.format_exc(), color.error)
+    try:
+      while True:
+        root_console.clear()
+        handler.on_render(console=root_console)
+        context.present(root_console)
 
+        try:
+          for event in tcod.event.wait():
+            context.convert_event(event)
+            handler = handler.handle_events(event)
+        except Exception:
+          traceback.print_exc()
+          if isinstance(handler, input_handlers.EventHandler):
+            handler.engine.message_log.add_message(
+              traceback.format_exc(), color.error
+            )
+    except exceptions.QuitWithoutSaving:
+      raise
+    except SystemExit: #saving this time
+      raise
+    except BaseException: #save if something else breaks
+      raise
 #boilerplate to make sure main only runs when the script is called
 if __name__ == "__main__":
   main()
