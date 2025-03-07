@@ -360,18 +360,15 @@ class MainGameEventHandler(EventHandler):
     action: Optional[Action] = None
 
     key = event.sym
+    modifier = event.mod
 
     player = self.engine.player
 
-    #Old input handling
-    # if key == tcod.event.KeySym.UP:
-    #   action = BumpAction(player, dx=0, dy=-1)
-    # elif key == tcod.event.KeySym.DOWN:
-    #   action = BumpAction(player, dx=0, dy=1)
-    # elif key == tcod.event.KeySym.LEFT:
-    #   action = BumpAction(player, dx=-1, dy=0)
-    # elif key == tcod.event.KeySym.RIGHT:
-    #   action = BumpAction(player, dx=1, dy=0)
+    if key == tcod.event.KeySym.PERIOD and modifier & (
+      tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+    ):
+      return actions.TakeStairsAction(player)
+
     if key in MOVE_KEYS:
       dx, dy = MOVE_KEYS[key]
       action = BumpAction(player, dx, dy)
