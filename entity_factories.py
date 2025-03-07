@@ -22,7 +22,7 @@ orc = Actor(
   color=(63, 127, 63),
   name='Orc',
   ai_cls=HostileEnemy,
-  fighter=Fighter(hp=10, defense=0, power=3),
+  fighter=Fighter(hp=10, defense=0, power=4),
   inventory=Inventory(capacity=0),
   level=Level(xp_given=35),
 )
@@ -31,7 +31,7 @@ troll = Actor(
   color=(0, 127, 0),
   name='Troll',
   ai_cls=HostileEnemy,
-  fighter=Fighter(hp=16, defense=1, power=4),
+  fighter=Fighter(hp=16, defense=1, power=8),
   inventory=Inventory(capacity=0),
   level=Level(xp_given=100),
 )
