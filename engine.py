@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import lzma
+import pickle
+
 from typing import TYPE_CHECKING
 
 from tcod.context import Context
@@ -10,7 +13,7 @@ from tcod.map import compute_fov
 # from tcod import FOV_SYMMETRIC_SHADOWCAST
 
 import exceptions
-from input_handlers import MainGameEventHandler
+# from input_handlers import MainGameEventHandler
 from message_log import MessageLog
 from render_functions import render_bar, render_names_at_mouse_location
 
@@ -18,13 +21,13 @@ if TYPE_CHECKING:
     # from entity import Entity
     from entity import Actor
     from game_map import GameMap
-    from input_handlers import EventHandler
+    # from input_handlers import EventHandler
 
 class Engine:
     game_map: GameMap
 
     def __init__(self, player: Actor):
-        self.event_handler: EventHandler = MainGameEventHandler(self)
+        # self.event_handler: EventHandler = MainGameEventHandler(self)
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
@@ -62,19 +65,8 @@ class Engine:
         )
 
         render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
-
-        #old HP indicator
-        # console.print(
-        #     x=1,
-        #     y=47,
-        #     string=f'HP: {self.player.fighter.hp}/{self.player.fighter.max_hp}',
-        # )
-
-        # for entity in self.entities:
-        #     if self.game_map.visible[entity.x, entity.y]:
-        #       console.print(entity.x, entity.y, entity.char, fg=entity.color)
-
-        # context.present(console)
-
-        #now handled by main.py
-        # console.clear()
+    
+    def save_as(self, filename: str) -> None:
+        save_data = lzma.compress(pickle.dumps(self))
+        with open(filename, 'wb') as f:
+            f.write(save_data)

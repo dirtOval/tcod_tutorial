@@ -1,13 +1,19 @@
 import tcod
-import copy
+# import copy
 import traceback
 
 import color
-from engine import Engine
-import entity_factories
+# from engine import Engine
+# import entity_factories
 import exceptions
 import input_handlers
-from procgen import generate_dungeon
+# from procgen import generate_dungeon
+import setup_game
+
+def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
+  if isinstance(handler, input_handlers.EventHandler):
+    handler.engine.save_as(filename)
+    print('Game saved!')
 
 def main() -> None:
   screen_width = 80
@@ -17,15 +23,15 @@ def main() -> None:
   # player_y = int(screen_height / 2)
 
   # GAME CONST VARIABLES
-  map_width = 80
-  map_height = 43
+  # map_width = 80
+  # map_height = 43
 
-  room_max_size = 10
-  room_min_size = 6
-  max_rooms = 30
+  # room_max_size = 10
+  # room_min_size = 6
+  # max_rooms = 30
   
-  max_monsters_per_room = 2
-  max_items_per_room = 2
+  # max_monsters_per_room = 2
+  # max_items_per_room = 2
 
   # maybe put these in a settings file later?
 
@@ -35,27 +41,28 @@ def main() -> None:
   )
 
   # player = Entity(int(screen_width / 2), int(screen_height / 2), '@', (255, 255, 255))
-  player = copy.deepcopy(entity_factories.player)
+  # player = copy.deepcopy(entity_factories.player)
 
-  engine = Engine(player=player)
+  # engine = Engine(player=player)
 
-  engine.game_map = generate_dungeon(
-    max_rooms=max_rooms,
-    room_min_size=room_min_size,
-    room_max_size=room_max_size,
-    map_width=map_width,
-    map_height=map_height,
-    max_monsters_per_room=max_monsters_per_room,
-    max_items_per_room=max_items_per_room,
-    engine=engine,
-  )
-  engine.update_fov()
+  # engine.game_map = generate_dungeon(
+  #   max_rooms=max_rooms,
+  #   room_min_size=room_min_size,
+  #   room_max_size=room_max_size,
+  #   map_width=map_width,
+  #   map_height=map_height,
+  #   max_monsters_per_room=max_monsters_per_room,
+  #   max_items_per_room=max_items_per_room,
+  #   engine=engine,
+  # )
+  # engine.update_fov()
 
-  engine.message_log.add_message(
-    'its dungeon time baybee oh YEAHHHHHHHH', color.welcome_text
-  )
+  # engine.message_log.add_message(
+  #   'its dungeon time baybee oh YEAHHHHHHHH', color.welcome_text
+  # )
 
-  handler: input_handlers.BaseEventHandler = input_handlers.MainGameEventHandler(engine)
+  # handler: input_handlers.BaseEventHandler = input_handlers.MainGameEventHandler(engine)
+  handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
 
   # engine = Engine(event_handler=event_handler, game_map=game_map, player=player)
 
@@ -98,8 +105,10 @@ def main() -> None:
     except exceptions.QuitWithoutSaving:
       raise
     except SystemExit: #saving this time
+      save_game(handler, 'savegame.sav')
       raise
     except BaseException: #save if something else breaks
+      save_game(handler, 'savegame.sav')
       raise
 #boilerplate to make sure main only runs when the script is called
 if __name__ == "__main__":

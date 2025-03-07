@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 
 import tcod.event
@@ -79,6 +81,28 @@ class BaseEventHandler(tcod.event.EventDispatch[ActionOrHandler]):
   
   def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
     raise SystemExit()
+  
+class PopupMessage(BaseEventHandler):
+  def __init__(self, parent_handler: BaseEventHandler, text: str):
+    self.parent = parent_handler
+    self.text = text
+  
+  def on_render(self, console: tcod.console.Console) -> None:
+    self.parent.on_render(console)
+    console.rgb['fg'] //= 8
+    console.rgb['bg'] //= 8
+
+    console.print(
+      console.width // 2,
+      console.height // 2,
+      self.text,
+      fg=color.white,
+      bg=color.black,
+      alignment=tcod.CENTER,
+    )
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[BaseEventHandler]:
+      return self.parent
 
 class EventHandler(BaseEventHandler):
   def __init__(self, engine: Engine):
@@ -376,6 +400,14 @@ class MainGameEventHandler(EventHandler):
     return action
   
 class GameOverEventHandler(EventHandler):
+  def on_quit(self) -> None:
+    if os.path.exists('savegame.sav'):
+      os.remove('savegame.sav')
+    raise exceptions.QuitWithoutSaving()
+  
+  def ev_quit(self, event: tcod.event.Quit) -> None:
+    self.on_quit()
+
   # def handle_events(self, context: tcod.context.Context) -> None:
   #   for event in tcod.event.wait():
   #     action = self.dispatch(event)
