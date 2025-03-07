@@ -48,12 +48,26 @@ def new_game() -> Engine:
   engine.message_log.add_message(
     'NEW GAME', color.welcome_text
   )
+
+  dagger = copy.deepcopy(entity_factories.dagger)
+  leather_armor = copy.deepcopy(entity_factories.leather_armor)
+
+  dagger.parent = player.inventory
+  leather_armor.parent = player.inventory
+
+  player.inventory.items.append(dagger)
+  player.equipment.toggle_equip(dagger, add_message=False)
+  player.inventory.items.append(leather_armor)
+  player.equipment.toggle_equip(leather_armor, add_message=False)
+
+
   return engine
 
 def load_game(filename: str) -> Engine:
   with open(filename, 'rb') as f:
     engine = pickle.loads(lzma.decompress(f.read()))
   assert isinstance(engine, Engine)
+
   return engine
 
 class MainMenu(input_handlers.BaseEventHandler):
