@@ -181,6 +181,44 @@ class AskUserEventHandler(EventHandler):
   def on_exit(self) -> Optional[ActionOrHandler]:
     # self.engine.event_handler = MainGameEventHandler(self.engine)
     return MainGameEventHandler(self.engine)
+  
+#probably wanna disable this later
+class DebugMenuEventHandler(AskUserEventHandler):
+  TITLE = 'Debug'
+
+  def on_render(self, console: tcod.console.Console) -> None:
+    super().on_render(console)
+
+    if self.engine.player.x <= 30:
+      x = 40
+    else:
+      x = 0
+    y = 0
+
+    width = len(self.TITLE) + 20
+
+    console.draw_frame(
+      x=x,
+      y=y,
+      width=width,
+      height=7,
+      title=self.TITLE,
+      clear=True,
+      fg=(255, 255, 255),
+      bg=(0, 0, 0),
+    )
+
+    console.print(
+      x=x + 1, y=y + 1, string=f'1) do FOV? [{self.engine.do_fov}]'
+    )
+
+  def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+    if event.sym == tcod.event.KeySym.N1:
+      self.engine.do_fov = not self.engine.do_fov
+      print(f'do_fov: {self.engine.do_fov}')
+    else:
+      return super().ev_keydown(event)
+
 
 class CharacterScreenEventHandler(AskUserEventHandler):
   TITLE = 'Character Information'
@@ -472,21 +510,6 @@ class AreaRangedAttackHandler(SelectIndexHandler):
     return self.callback((x, y))
 
 class MainGameEventHandler(EventHandler):
-  # def handle_events(self, context: tcod.context.Context) -> None:
-  #   for event in tcod.event.wait():
-  #     context.convert_event(event)
-  #     action = self.dispatch(event)
-
-  #     if action is None:
-  #       continue
-
-  #     action.perform()
-
-  #     self.engine.handle_enemy_turns()
-  #     self.engine.update_fov()
-
-  # def ev_quit(self, event: tcod.event.KeyDown) -> Optional[Action]:
-  #   raise SystemExit()
   
   def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
     action: Optional[Action] = None
@@ -528,6 +551,12 @@ class MainGameEventHandler(EventHandler):
     
     elif key == tcod.event.KeySym.c:
       return CharacterScreenEventHandler(self.engine)
+    
+    #debugger activate
+    elif key == tcod.event.KeySym.BACKQUOTE:
+      # self.engine.debug_mode = not self.engine.debug_mode
+      # print(f'debug mode = {self.engine.debug_mode}')
+      return DebugMenuEventHandler(self.engine)
 
     return action
   
@@ -540,24 +569,6 @@ class GameOverEventHandler(EventHandler):
   def ev_quit(self, event: tcod.event.Quit) -> None:
     self.on_quit()
 
-  # def handle_events(self, context: tcod.context.Context) -> None:
-  #   for event in tcod.event.wait():
-  #     action = self.dispatch(event)
-
-  #     if action is None:
-  #       continue
-
-  #     action.perform()
-
-  # def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
-  #   action: Optional[Action] = None
-
-  #   key = event.sym
-
-  #   if key == tcod.event.KeySym.ESCAPE:
-  #     action = EscapeAction(self.engine.player)
-
-  #   return action
   def ev_keydown(self, event: tcod.event.KeyDown) -> None:
     if event.sym == tcod.event.KeySym.ESCAPE:
       raise SystemExit()

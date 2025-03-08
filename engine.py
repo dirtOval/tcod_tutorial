@@ -28,12 +28,11 @@ class Engine:
     game_world: GameWorld
 
     def __init__(self, player: Actor):
-        # self.event_handler: EventHandler = MainGameEventHandler(self)
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
-        # self.game_map = game_map
-        # self.update_fov()
+        # self.debug_mode = False
+        self.do_fov = True
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
