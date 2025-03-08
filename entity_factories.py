@@ -1,10 +1,10 @@
-from components.ai import HostileEnemy
-from components import consumable, equippable
+from components.ai import HostileEnemy, Miner
+from components import consumable, equippable, harvestable
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from entity import Actor, Item
+from entity import Actor, Item, ResourceWell
 
 # player = Entity(char='@', color=(255, 255, 255), name='Player', blocks_movement=True)
 player = Actor(
@@ -18,7 +18,27 @@ player = Actor(
   level=Level(level_up_base=200),
 )
 
-#hostile mobs -- deirdre
+#neutral mobs
+miner = Actor(
+  char='m',
+  color=(0, 0, 200),
+  name='Miner',
+  ai_cls=Miner,
+  equipment=Equipment(),
+  fighter=Fighter(hp=5, base_defense=0, base_power=1),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+)
+
+#resource wells
+crystal_well = ResourceWell(
+  char='C',
+  color=(7, 227, 247),
+  name='Crystal Well',
+  harvestable = harvestable.Crystal(100)
+)
+
+#hostile mobs
 virus = Actor(
   char='v',
   color=(0, 150, 150),
@@ -31,7 +51,7 @@ virus = Actor(
 
 )
 
-#HOSTILE MOBS -- TUTORIAL
+#TUTORIAL STUFF-------------------------------------------
 orc = Actor(
   char='o',
   color=(63, 127, 63),

@@ -95,3 +95,6 @@ class HostileEnemy(BaseAI):
       ).perform()
     
     return WaitAction(self.entity).perform()
+  
+class Miner(BaseAI):
+  pass

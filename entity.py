@@ -12,6 +12,7 @@ if TYPE_CHECKING:
   from components.equipment import Equipment
   from components.equippable import Equippable
   from components.fighter import Fighter
+  from components.harvestable import Harvestable
   from components.inventory import Inventory
   from components.level import Level
   from game_map import GameMap
@@ -77,6 +78,9 @@ class Entity:
   def move(self, dx: int, dy: int) -> None:
     self.x += dx
     self.y += dy
+
+  def get_name(self,) -> str:
+    return self.name
 
 class Actor(Entity):
   def __init__(
@@ -153,3 +157,28 @@ class Item(Entity):
 
     if self.equippable:
       self.equippable.parent = self
+
+class ResourceWell(Entity):
+  #resources can be gathered here by workers
+  def __init__(
+    self,
+    *,
+    x: int = 0,
+    y: int = 0,
+    char: str = '?',
+    color: Tuple[int, int, int] = (255, 255, 255),
+    name: str = '<Unnamed>',
+    harvestable: Harvestable
+  ):
+    super().__init__(
+      x=x,
+      y=y,
+      char=char,
+      color=color,
+      name=name,
+      blocks_movement=True,
+      render_order=RenderOrder.RESOURCE_WELL
+    )
+
+  def get_name(self) -> str:
+    return f'{self.name} [{self.harvestable.capacity}'
