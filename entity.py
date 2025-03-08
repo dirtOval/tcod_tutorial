@@ -180,5 +180,7 @@ class ResourceWell(Entity):
       render_order=RenderOrder.RESOURCE_WELL
     )
 
+    self.harvestable = harvestable
+
   def get_name(self) -> str:
-    return f'{self.name} [{self.harvestable.capacity}'
+    return f'{self.name} [{self.harvestable.capacity}]'
