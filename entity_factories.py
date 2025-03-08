@@ -18,7 +18,20 @@ player = Actor(
   level=Level(level_up_base=200),
 )
 
-#HOSTILE MOBS
+#hostile mobs -- deirdre
+virus = Actor(
+  char='v',
+  color=(0, 150, 150),
+  name='Virus',
+  ai_cls=HostileEnemy,
+  equipment=Equipment(),
+  fighter=Fighter(hp=10, base_defense=0, base_power=4),
+  inventory=Inventory(capacity=0),
+  level=Level(xp_given=35),
+
+)
+
+#HOSTILE MOBS -- TUTORIAL
 orc = Actor(
   char='o',
   color=(63, 127, 63),
@@ -40,7 +53,7 @@ troll = Actor(
   level=Level(xp_given=100),
 )
 
-#ITEMS
+#ITEMS -- TUTORIAL
 confusion_scroll = Item(
   char='~',
   color=(207, 63, 255),
@@ -66,7 +79,7 @@ lightning_scroll = Item(
   consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
 )
 
-#equipment
+#equipment -- tutorial
 
 dagger = Item(
   char='/', color=(0, 191, 255), name='Dagger', equippable=equippable.Dagger()

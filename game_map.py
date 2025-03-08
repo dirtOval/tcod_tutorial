@@ -116,6 +116,16 @@ class GameWorld:
 
     self.current_floor = current_floor
 
+  def generate_test_level(self) -> None:
+    from procgen import test_level
+
+    self.engine.game_map = test_level(
+      map_width=self.map_width,
+      map_height=self.map_height,
+      engine=self.engine,
+    )
+
+  #tutorial dungeon maps
   def generate_floor(self) -> None:
     from procgen import generate_dungeon
 

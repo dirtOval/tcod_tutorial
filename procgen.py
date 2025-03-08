@@ -26,7 +26,7 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-  0: [(entity_factories.health_potion, 35), (entity_factories.sword, 100), (entity_factories.chain_mail, 100)],
+  0: [(entity_factories.health_potion, 35)],
   2: [(entity_factories.confusion_scroll, 10)],
   4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
   6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
@@ -179,6 +179,20 @@ def tunnel_between(
   #   dungeon.tiles[x, y] = tile_types.floor
 
   # return dungeon
+
+def test_level( #for testing new mechanics, mobs, etc
+    map_width: int,
+    map_height: int,
+    engine: Engine
+) -> GameMap:
+  player = engine.player
+  dungeon = GameMap(engine, map_width, map_height, entities=[player])
+  room = RectangularRoom(1, 1, map_width - 2, map_height - 2)
+  dungeon.tiles[room.inner] = tile_types.floor
+  player.place(*room.center, dungeon)
+
+  return dungeon
+  
 
 def generate_dungeon(
   max_rooms: int,
