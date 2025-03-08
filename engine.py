@@ -44,10 +44,11 @@ class Engine:
                     pass #plays dont need to know every time AI fails attempt
 
     def update_fov(self) -> None:
+        fov_radius = 8 if self.do_fov else 0
         self.game_map.visible[:] = compute_fov(
             self.game_map.tiles['transparent'],
             (self.player.x, self.player.y),
-            radius=8, #should make this a variable later. flashlight/torch etc
+            radius=fov_radius, #should make this a variable later. flashlight/torch etc
             #fuck with FOV algorithm
         )
         self.game_map.explored |= self.game_map.visible

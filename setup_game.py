@@ -37,7 +37,7 @@ def test_level() -> Engine:
     map_height=map_height,
   )
   engine.game_world.generate_test_level()
-  # engine.game_world.generate_floor() #need to write a test level function
+  engine.do_fov = False
   engine.update_fov()
 
   engine.message_log.add_message(

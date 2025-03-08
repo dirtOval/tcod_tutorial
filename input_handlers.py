@@ -215,6 +215,7 @@ class DebugMenuEventHandler(AskUserEventHandler):
   def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
     if event.sym == tcod.event.KeySym.N1:
       self.engine.do_fov = not self.engine.do_fov
+      self.engine.update_fov()
       print(f'do_fov: {self.engine.do_fov}')
     else:
       return super().ev_keydown(event)
