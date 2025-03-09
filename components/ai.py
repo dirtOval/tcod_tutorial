@@ -10,7 +10,7 @@ from actions import Action, MeleeAction, MovementAction, WaitAction, BumpAction
 # from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
-  from entity import Actor
+  from entity import Actor, MobSpawner
 
 # class BaseAI(Action, BaseComponent):
 class BaseAI(Action):
@@ -35,6 +35,8 @@ class BaseAI(Action):
     path: List[List[int]] = pathfinder.path_to((dest_x, dest_y))[1:].tolist()
 
     return [(index[0], index[1]) for index in path]
+  
+  # def get_closest_hostile(self, faction: str =''):
   
 class ConfusedEnemy(BaseAI): #move randomly, attacking any actor it runs into
   def __init__(
@@ -71,6 +73,14 @@ class ConfusedEnemy(BaseAI): #move randomly, attacking any actor it runs into
 
 
 class HostileEnemy(BaseAI):
+
+  '''
+  ideally the hostile AI should:
+  1. identify which enemy is closest and path to them
+  2. break off pursuit and find a new enemy if far enough away
+  
+  '''
+
   def __init__(self, entity: Actor):
     super().__init__(entity)
     self.path: List[Tuple[int, int]] = []
@@ -98,3 +108,11 @@ class HostileEnemy(BaseAI):
   
 class Miner(BaseAI):
   pass
+
+class SpawnerAI(BaseAI):
+  def __init__(self, entity: MobSpawner):
+    super().__init__(entity)
+
+  def perform(self) -> None:
+    self.entity.spawner.decrement_timer()
+    return WaitAction(self.entity).perform()

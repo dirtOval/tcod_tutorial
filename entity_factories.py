@@ -1,10 +1,11 @@
-from components.ai import HostileEnemy, Miner
+from components.ai import HostileEnemy, Miner, SpawnerAI
 from components import consumable, equippable, harvestable
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from entity import Actor, Item, ResourceWell
+from components.spawner import VirusSpawner
+from entity import Actor, Item, MobSpawner, ResourceWell
 
 # player = Entity(char='@', color=(255, 255, 255), name='Player', blocks_movement=True)
 player = Actor(
@@ -16,8 +17,21 @@ player = Actor(
   fighter=Fighter(hp=30, base_defense=1, base_power=2),
   inventory=Inventory(capacity=26),
   level=Level(level_up_base=200),
+  faction='player',
 )
 
+#allied mobs
+# guard = Actor(
+#   char='g',
+#   color=(0, 0, 200),
+#   name='Guard',
+#   ai_cls=AlliedCombatant,
+#   equipment=Equipment(),
+#   fighter=Fighter(hp=10, base_defense=0, base_power=4),
+#   inventory=Inventory(capacity=1),
+#   level=Level(xp_given=0),
+#   faction='ally'
+# )
 #neutral mobs
 miner = Actor(
   char='m',
@@ -28,14 +42,7 @@ miner = Actor(
   fighter=Fighter(hp=5, base_defense=0, base_power=1),
   inventory=Inventory(capacity=1),
   level=Level(xp_given=0),
-)
-
-#resource wells
-crystal_well = ResourceWell(
-  char='C',
-  color=(7, 227, 247),
-  name='Crystal Well',
-  harvestable = harvestable.Crystal(100)
+  faction='neutral',
 )
 
 #hostile mobs
@@ -48,7 +55,28 @@ virus = Actor(
   fighter=Fighter(hp=10, base_defense=0, base_power=4),
   inventory=Inventory(capacity=0),
   level=Level(xp_given=35),
+  faction='hostile',
+)
 
+
+#mob spawners
+virus_spawner = MobSpawner(
+  char='O',
+  color=(0, 150, 150),
+  name='Virus Spawner',
+  fighter=Fighter(hp=20, base_defense=3, base_power=0),
+  level=Level(xp_given=50),
+  ai_cls=SpawnerAI,
+  spawner=VirusSpawner(),
+  faction='hostile',
+)
+
+#resource wells
+crystal_well = ResourceWell(
+  char='C',
+  color=(7, 227, 247),
+  name='Crystal Well',
+  harvestable = harvestable.Crystal(100)
 )
 
 #TUTORIAL STUFF-------------------------------------------
@@ -61,6 +89,7 @@ orc = Actor(
   fighter=Fighter(hp=10, base_defense=0, base_power=4),
   inventory=Inventory(capacity=0),
   level=Level(xp_given=35),
+  faction='hostile',
 )
 troll = Actor(
   char='T',
@@ -71,6 +100,7 @@ troll = Actor(
   fighter=Fighter(hp=16, base_defense=1, base_power=8),
   inventory=Inventory(capacity=0),
   level=Level(xp_given=100),
+  faction='hostile',
 )
 
 #ITEMS -- TUTORIAL

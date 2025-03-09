@@ -7,12 +7,13 @@ from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
-  from components.ai import BaseAI
+  from components.ai import BaseAI, SpawnerAI
   from components.consumable import Consumable
   from components.equipment import Equipment
   from components.equippable import Equippable
   from components.fighter import Fighter
   from components.harvestable import Harvestable
+  from components.spawner import Spawner
   from components.inventory import Inventory
   from components.level import Level
   from game_map import GameMap
@@ -91,11 +92,14 @@ class Actor(Entity):
       char: str = '?',
       color: Tuple[int, int, int] = (255, 255, 255),
       name: str = '<Unnamed>',
+      blocks_movement: bool = True,
+      render_order: RenderOrder = RenderOrder.ACTOR,
       ai_cls: Type[BaseAI],
       equipment: Equipment,
       fighter: Fighter,
       inventory: Inventory,
       level: Level,
+      faction: str,
   ):
       super().__init__(
         x=x,
@@ -103,27 +107,67 @@ class Actor(Entity):
         char=char,
         color=color,
         name=name,
-        blocks_movement=True,
-        render_order=RenderOrder.ACTOR,
+        blocks_movement=blocks_movement,
+        render_order=render_order,
       )
 
       self.ai: Optional[BaseAI] = ai_cls(self)
 
-      self.equipment: Equipment = equipment
-      self.equipment.parent = self
+      self.equipment: Optional[Equipment] = equipment
+      if self.equipment:
+        self.equipment.parent = self
     
       self.fighter = fighter
       self.fighter.parent = self
 
-      self.inventory = inventory
-      self.inventory.parent = self
+      self.inventory: Optional[Inventory] = inventory
+      if self.inventory:
+        self.inventory.parent = self
 
       self.level = level
       self.level.parent = self
 
+      self.faction = Optional[faction]
+
   @property
   def is_alive(self) -> bool:
     return bool(self.ai)
+
+class MobSpawner(Actor):
+  def __init__(
+      self,
+      *,
+      x: int = 0,
+      y: int = 0,
+      char: str = 'O',
+      color: Tuple[int, int, int] = (255, 255, 255),
+      name: str = '<Unnamed>',
+      fighter: Fighter,
+      level: Level,
+      ai_cls: Type[SpawnerAI],
+      spawner: Type[Spawner],
+      faction: str,
+  ):
+    super().__init__(
+      x=x,
+      y=y,
+      char=char,
+      color=color,
+      name=name,
+      ai_cls=ai_cls,
+      equipment=None,
+      fighter=fighter,
+      inventory=None,
+      level=level,
+      blocks_movement=False,
+      render_order=RenderOrder.STRUCTURE,
+      faction=faction,
+    )
+
+    self.ai: Optional[BaseAI] = ai_cls(self)
+    
+    self.spawner: Optional[Spawner] = spawner
+    self.spawner.parent = self
 
 class Item(Entity):
   def __init__(
@@ -177,10 +221,11 @@ class ResourceWell(Entity):
       color=color,
       name=name,
       blocks_movement=True,
-      render_order=RenderOrder.RESOURCE_WELL
+      render_order=RenderOrder.STRUCTURE
     )
 
     self.harvestable = harvestable
 
   def get_name(self) -> str:
     return f'{self.name} [{self.harvestable.capacity}]'
+  
