@@ -34,3 +34,7 @@ class Spawner(BaseComponent):
 class VirusSpawner(Spawner):
   def __init__(self, delay = 5) -> None:
     super().__init__(mob=entity_factories.virus, delay=delay)
+
+class GuardSpawner(Spawner):
+  def __init__(self, delay = 5) -> None:
+    super().__init__(mob=entity_factories.guard, delay=delay)

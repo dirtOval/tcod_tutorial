@@ -4,7 +4,7 @@ from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from components.spawner import VirusSpawner
+from components.spawner import GuardSpawner, VirusSpawner
 from entity import Actor, Item, MobSpawner, ResourceWell
 
 # player = Entity(char='@', color=(255, 255, 255), name='Player', blocks_movement=True)
@@ -21,18 +21,18 @@ player = Actor(
 )
 
 #allied mobs
-# guard = Actor(
-#   char='g',
-#   color=(0, 0, 200),
-#   name='Guard',
-#   ai_cls=AlliedCombatant,
-#   equipment=Equipment(),
-#   fighter=Fighter(hp=10, base_defense=0, base_power=4),
-#   inventory=Inventory(capacity=1),
-#   level=Level(xp_given=0),
-#   faction='ally'
-# )
-#neutral mobs
+guard = Actor(
+  char='g',
+  color=(255, 0, 200),
+  name='Guard',
+  ai_cls=Combatant,
+  equipment=Equipment(),
+  fighter=Fighter(hp=10, base_defense=0, base_power=4),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+  faction='player'
+)
+
 miner = Actor(
   char='m',
   color=(0, 0, 200),
@@ -48,7 +48,7 @@ miner = Actor(
 #hostile mobs
 virus = Actor(
   char='v',
-  color=(0, 150, 150),
+  color=(0, 175, 175),
   name='Virus',
   ai_cls=Combatant,
   equipment=Equipment(),
@@ -62,13 +62,24 @@ virus = Actor(
 #mob spawners
 virus_spawner = MobSpawner(
   char='O',
-  color=(0, 150, 150),
+  color=(0, 175, 175),
   name='Virus Spawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
   ai_cls=SpawnerAI,
   spawner=VirusSpawner(),
   faction='hostile',
+)
+
+guard_spawner = MobSpawner(
+  char='O',
+  color=(255, 0, 200),
+  name='Guard Spawner',
+  fighter=Fighter(hp=20, base_defense=3, base_power=0),
+  level=Level(xp_given=50),
+  ai_cls=SpawnerAI,
+  spawner=GuardSpawner(),
+  faction='player',
 )
 
 #resource wells
