@@ -85,8 +85,15 @@ class Combatant(BaseAI):
     super().__init__(entity)
     self.path: List[Tuple[int, int]] = []
 
+  def get_closest_enemy(self) -> Actor:
+    return self.entity.get_closest_entity(
+      [actor for actor in self.entity.gamemap.actors
+        if actor.faction != self.entity.faction]
+    )
+
   def perform(self) -> None:
-    target = self.engine.player
+    # target = self.engine.player
+    target = self.get_closest_enemy()
     dx = target.x - self.entity.x
     dy = target.y - self.entity.y
     #look up Chebyshev distance

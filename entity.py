@@ -76,6 +76,7 @@ class Entity:
   def distance(self, x: int, y: int) -> float:
     return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
   
+  #pass a list comprehension into this if you want specificity
   def get_closest_entity(self, list: List[Entity]) -> Entity:
     closest_entity = None
     closest_distance = -1
