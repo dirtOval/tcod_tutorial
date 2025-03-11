@@ -192,8 +192,11 @@ def test_level( #for testing new mechanics, mobs, etc
   player.place(*room.center, dungeon)
 
   # entity_factories.crystal_well.spawn(dungeon, 20, 20)
-  entity_factories.virus_spawner.spawn(dungeon, 20, 21)
-  entity_factories.guard_spawner.spawn(dungeon, 60, 21)
+  entity_factories.virus_spawner.spawn(dungeon, 20, 2)
+  entity_factories.virus_spawner.spawn(dungeon, 20, 41)
+  entity_factories.guard_spawner.spawn(dungeon, 60, 2)
+  entity_factories.guard_spawner.spawn(dungeon, 60, 41)
+
 
 
   return dungeon
