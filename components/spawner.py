@@ -26,7 +26,7 @@ class Spawner(BaseComponent):
 
   def decrement_timer(self) -> None:
     self.timer -= 1
-    print(f'{self.parent.name} timer: {self.timer}')
+    # print(f'{self.parent.name} timer: {self.timer}')
     if self.timer <= 0:
       self.spawn_mob()
       self.timer = self.delay

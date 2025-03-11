@@ -72,7 +72,7 @@ class ConfusedEnemy(BaseAI): #move randomly, attacking any actor it runs into
       return BumpAction(self.entity, direction_x, direction_y).perform()
 
 
-class HostileEnemy(BaseAI):
+class Combatant(BaseAI):
 
   '''
   ideally the hostile AI should:

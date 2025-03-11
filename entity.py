@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 import math
-from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
+from typing import Optional, Tuple, Type, List, TypeVar, TYPE_CHECKING, Union
 
 from render_order import RenderOrder
 
@@ -75,6 +75,16 @@ class Entity:
 
   def distance(self, x: int, y: int) -> float:
     return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
+  
+  def get_closest_entity(self, list: List[Entity]) -> Entity:
+    closest_entity = None
+    closest_distance = -1
+    for entity in [entity for entity in list if entity != self]:
+      distance = self.distance(entity.x, entity.y)
+      if closest_entity is None or distance < closest_distance:
+        closest_distance = distance
+        closest_entity = entity
+    return closest_entity
 
   def move(self, dx: int, dy: int) -> None:
     self.x += dx
