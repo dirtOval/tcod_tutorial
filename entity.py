@@ -81,6 +81,8 @@ class Entity:
     closest_entity = None
     closest_distance = -1
     for entity in [entity for entity in list if entity != self]:
+      if entity is self.parent.engine.player and self.parent.engine.player_is_ghost:
+        continue
       distance = self.distance(entity.x, entity.y)
       if closest_entity is None or distance < closest_distance:
         closest_distance = distance

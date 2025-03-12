@@ -70,7 +70,11 @@ class Fighter(BaseComponent):
 
     # print(death_message)
     self.engine.message_log.add_message(death_message, death_message_color)
-    self.engine.player.level.add_xp(self.parent.level.xp_given)
+    '''
+    disabled XP for now, currently it goes to the player no matter who kills it,
+    which is no good. I also just don't know if i want XP in the game.
+    '''
+    # self.engine.player.level.add_xp(self.parent.level.xp_given)
 
   def heal(self, amount: int) -> int:
     if self.hp == self.max_hp:

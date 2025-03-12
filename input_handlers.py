@@ -18,6 +18,8 @@ from entity import Item
 
 import color
 import exceptions
+#for auto wait
+import time
 
 #find out wtf TYPE_CHECKING is
 if TYPE_CHECKING:
@@ -107,14 +109,19 @@ class PopupMessage(BaseEventHandler):
 class EventHandler(BaseEventHandler):
   def __init__(self, engine: Engine):
     self.engine = engine
-
-  # def handle_events(self) -> None:
-  #   raise NotImplementedError()
-
-  # def handle_events(self, event: tcod.event.Event) -> None:
-  #   self.handle_action(self.dispatch(event))
+    #not working, must figure out
+    # self.waiting = False
+  
   def handle_events(self, event: tcod.event.Event) -> BaseEventHandler:
+    #NOT WORKING
+    # if self.waiting:
+    #   time.sleep(0.2)
+    #   self.handle_action(WaitAction(self.engine.player))
+    #   return MainGameEventHandler(self.engine)
+    # else:
+    #   action_or_state = self.dispatch(event)
     action_or_state = self.dispatch(event)
+    
     if isinstance(action_or_state, BaseEventHandler):
       return action_or_state
     if self.handle_action(action_or_state):
@@ -195,7 +202,7 @@ class DebugMenuEventHandler(AskUserEventHandler):
       x = 0
     y = 0
 
-    width = len(self.TITLE) + 20
+    width = 40
 
     console.draw_frame(
       x=x,
@@ -211,12 +218,26 @@ class DebugMenuEventHandler(AskUserEventHandler):
     console.print(
       x=x + 1, y=y + 1, string=f'1) do FOV? [{self.engine.do_fov}]'
     )
+    console.print(
+      x=x + 1, y=y + 2, string=f'2) player is ghost? [{self.engine.do_fov}]'
+    )
+    '''
+    TO DO!
+    -ghost player
+    -freeze events
+    -teleport
+    -spawner
+    -auto-wait -- this needs a lot more thought
+    '''
 
   def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
     if event.sym == tcod.event.KeySym.N1:
       self.engine.do_fov = not self.engine.do_fov
       self.engine.update_fov()
       print(f'do_fov: {self.engine.do_fov}')
+    elif event.sym == tcod.event.KeySym.N2:
+      self.engine.player_is_ghost = not self.engine.player_is_ghost
+      print(f'player_is_ghost: {self.engine.player_is_ghost}')
     else:
       return super().ev_keydown(event)
 
@@ -511,7 +532,10 @@ class AreaRangedAttackHandler(SelectIndexHandler):
     return self.callback((x, y))
 
 class MainGameEventHandler(EventHandler):
-  
+
+  def __init__(self, engine: Engine):
+    super().__init__(engine)
+
   def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
     action: Optional[Action] = None
 
@@ -558,8 +582,29 @@ class MainGameEventHandler(EventHandler):
       # self.engine.debug_mode = not self.engine.debug_mode
       # print(f'debug mode = {self.engine.debug_mode}')
       return DebugMenuEventHandler(self.engine)
+    
+    #auto-wait enable -- NOT WORKING
+    # elif key == tcod.event.KeySym.KP_PERIOD:
+    #   self.waiting = not self.waiting
+      # return AutoWaitEventHandler(self.engine)
 
     return action
+  
+# class AutoWaitEventHandler(EventHandler):
+#   # def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+#     # key = event.sym
+#     # if key
+#   def __init__(self, engine: Engine):
+#     self.engine = engine
+#     self.waiting = True
+
+#   def handle_events(self, key: tcod.event.KeySym) -> BaseEventHandler:
+#     while self.waiting:
+#       time.sleep(0.5)
+#       self.engine.handle_enemy_turns()
+#       # self.on_render()
+#       return AutoWaitEventHandler(self.engine)
+#     # return MainGameEventHandler(self.engine)
   
 class GameOverEventHandler(EventHandler):
   def on_quit(self) -> None:
