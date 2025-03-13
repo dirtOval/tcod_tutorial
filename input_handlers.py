@@ -219,10 +219,10 @@ class DebugMenuEventHandler(AskUserEventHandler):
       x=x + 1, y=y + 1, string=f'1) do FOV? [{self.engine.do_fov}]'
     )
     console.print(
-      x=x + 1, y=y + 2, string=f'2) player is ghost? [{self.engine.do_fov}]'
+      x=x + 1, y=y + 2, string=f'2) player is ghost? [{self.engine.player_is_ghost}]'
     )
     console.print(
-      x=x + 1, y=y + 3, string=f'2) player teleport? (num +) [{self.engine.do_fov}]'
+      x=x + 1, y=y + 3, string=f'3) player teleport? (num +) [{self.engine.player_teleport}]'
     )
     '''
     TO DO!
@@ -241,6 +241,9 @@ class DebugMenuEventHandler(AskUserEventHandler):
     elif event.sym == tcod.event.KeySym.N2:
       self.engine.player_is_ghost = not self.engine.player_is_ghost
       print(f'player_is_ghost: {self.engine.player_is_ghost}')
+    elif event.sym == tcod.event.KeySym.N3:
+      self.engine.player_teleport = not self.engine.player_teleport
+      print(f'player_teleport: {self.engine.player_teleport}')
     else:
       return super().ev_keydown(event)
 
