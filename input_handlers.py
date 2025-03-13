@@ -15,11 +15,12 @@ from actions import (
   WaitAction
 )
 from entity import Item
+from render_order import RenderOrder
 
 import color
 import exceptions
 #for auto wait
-import time
+# import time
 
 #find out wtf TYPE_CHECKING is
 if TYPE_CHECKING:
@@ -241,6 +242,8 @@ class DebugMenuEventHandler(AskUserEventHandler):
     elif event.sym == tcod.event.KeySym.N2:
       self.engine.player_is_ghost = not self.engine.player_is_ghost
       print(f'player_is_ghost: {self.engine.player_is_ghost}')
+      self.engine.player.blocks_movement = False if self.engine.player_is_ghost else True
+      self.engine.player.render_order = RenderOrder.GHOST if self.engine.player_is_ghost else RenderOrder.ACTOR
     elif event.sym == tcod.event.KeySym.N3:
       self.engine.player_teleport = not self.engine.player_teleport
       print(f'player_teleport: {self.engine.player_teleport}')

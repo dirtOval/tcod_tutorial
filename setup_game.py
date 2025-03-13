@@ -14,6 +14,7 @@ import entity_factories
 from game_map import GameWorld
 import input_handlers
 from procgen import generate_dungeon
+from render_order import RenderOrder
 
 background_image = tcod.image.load('menu_background.png')[:, :, :3]
 
@@ -38,7 +39,11 @@ def test_level() -> Engine:
   )
   engine.game_world.generate_test_level()
   engine.do_fov = False
+
   engine.player_is_ghost = True
+  player.blocks_movement = False
+  player.render_order = RenderOrder.GHOST
+
   engine.player_teleport = True
   engine.update_fov()
 

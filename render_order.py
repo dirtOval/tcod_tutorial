@@ -5,3 +5,4 @@ class RenderOrder(Enum):
   ITEM = auto()
   STRUCTURE = auto()
   ACTOR = auto()
+  GHOST = auto()
