@@ -14,7 +14,6 @@ from actions import (
   PickupAction,
   WaitAction
 )
-from entity import Item
 from render_order import RenderOrder
 
 import color
@@ -449,6 +448,57 @@ class InventoryDropHandler(InventoryEventHandler):
   def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
     return actions.DropItem(self.engine.player, item)
   
+class SpawnerMenuHandler(AskUserEventHandler):
+  def __init__(self, engine: Engine):
+    super().__init__(engine)
+    self.TITLE = 'Spawner Menu'
+
+  def on_render(self, console: tcod.Console) -> None:
+    super().on_render(console)
+    number_of_entities = len(self.engine.entity_list)
+
+    height = number_of_entities + 2
+
+    if height <= 3:
+      height = 3
+
+    if self.engine.player.x <= 30:
+      x = 40
+    else:
+      x = 0
+
+    y = 0
+
+    width = len(self.TITLE) + 10
+      
+    console.draw_frame(
+      x=x,
+      y=y,
+      width=width,
+      height=height,
+      title=self.TITLE,
+      clear=True,
+      fg=(255, 255, 255),
+      bg=(0, 0, 0),
+    )
+    
+    if number_of_entities > 0:
+      for i, entity in enumerate(self.engine.entity_list):
+        entity_key = chr(ord('a') + i)
+        # console.print(x + 1, y + i + 1, f'({item_key}) {item.name}')
+
+        # is_equipped = self.engine.player.equipment.item_is_equipped(item)
+
+        entity_string = f'({entity_key}) {entity}'
+
+        # if is_equipped:
+        #   item_string = f'{item_string} (E)'
+
+        console.print(x + 1, y + i + 1, entity_string)
+    else:
+      console.print(x + 1, y + 1, '(Empty)')
+
+  
 class SelectIndexHandler(AskUserEventHandler):
   def __init__(self, engine: Engine):
     super().__init__(engine)
@@ -603,11 +653,18 @@ class MainGameEventHandler(EventHandler):
     elif key == tcod.event.KeySym.KP_MULTIPLY:
       if self.engine.player_teleport == True:
         return PlayerTeleportHandler(self.engine)
+      
+    elif key == tcod.event.KeySym.KP_PLUS:
+      return SpawnerMenuHandler(self.engine)
     
     #auto-wait enable -- NOT WORKING
     # elif key == tcod.event.KeySym.KP_PERIOD:
     #   self.waiting = not self.waiting
       # return AutoWaitEventHandler(self.engine)
+
+    elif key == tcod.event.KeySym.KP_PLUS:
+      #open the spawner menu input handler
+      pass
 
     return action
   

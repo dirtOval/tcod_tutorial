@@ -16,6 +16,8 @@ import exceptions
 # from input_handlers import MainGameEventHandler
 from message_log import MessageLog
 import render_functions
+import entity_factories
+from entity import Entity
 
 if TYPE_CHECKING:
     # from entity import Entity
@@ -31,6 +33,7 @@ class Engine:
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
+        self.entity_list = dict([(var, obj) for var, obj in entity_factories.__dict__.items() if isinstance(obj, Entity)])
         # self.debug_mode = False
         #debug switches
         self.do_fov = True
