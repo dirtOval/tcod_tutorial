@@ -32,8 +32,10 @@ class Engine:
         self.mouse_location = (0, 0)
         self.player = player
         # self.debug_mode = False
+        #debug switches
         self.do_fov = True
         self.player_is_ghost = False
+        self.player_teleport = False
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:

@@ -39,6 +39,7 @@ def test_level() -> Engine:
   engine.game_world.generate_test_level()
   engine.do_fov = False
   engine.player_is_ghost = True
+  engine.player_teleport = True
   engine.update_fov()
 
   engine.message_log.add_message(

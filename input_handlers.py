@@ -221,6 +221,9 @@ class DebugMenuEventHandler(AskUserEventHandler):
     console.print(
       x=x + 1, y=y + 2, string=f'2) player is ghost? [{self.engine.do_fov}]'
     )
+    console.print(
+      x=x + 1, y=y + 3, string=f'2) player teleport? (num +) [{self.engine.do_fov}]'
+    )
     '''
     TO DO!
     -ghost player
@@ -491,6 +494,13 @@ class LookHandler(SelectIndexHandler):
   def on_index_selected(self, x: int, y: int) -> None:
     # self.engine.event_handler = MainGameEventHandler(self.engine)
     return MainGameEventHandler(self.engine)
+  
+class PlayerTeleportHandler(SelectIndexHandler):
+  #debug tool to teleport player around map
+  def on_index_selected(self, x: int, y: int) -> None:
+    self.engine.player.x = x
+    self.engine.player.y = y
+    return MainGameEventHandler(self.engine)
 
 class SingleRangedAttackHandler(SelectIndexHandler):
   def __init__(
@@ -582,6 +592,11 @@ class MainGameEventHandler(EventHandler):
       # self.engine.debug_mode = not self.engine.debug_mode
       # print(f'debug mode = {self.engine.debug_mode}')
       return DebugMenuEventHandler(self.engine)
+    
+    #debug tools
+    elif key == tcod.event.KeySym.KP_PLUS:
+      if self.engine.player_teleport == True:
+        return PlayerTeleportHandler(self.engine)
     
     #auto-wait enable -- NOT WORKING
     # elif key == tcod.event.KeySym.KP_PERIOD:
