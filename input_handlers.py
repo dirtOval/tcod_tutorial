@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Callable, Iterable, Optional, Tuple, TYPE_CHECKING, Union
 
 import tcod.event
 
@@ -24,6 +24,7 @@ import exceptions
 #find out wtf TYPE_CHECKING is
 if TYPE_CHECKING:
   from engine import Engine
+  from entity import Item, Entity
 
 MOVE_KEYS = {
   #arrow keys
@@ -453,6 +454,10 @@ class SpawnerMenuHandler(AskUserEventHandler):
     super().__init__(engine)
     self.TITLE = 'Spawner Menu'
 
+  @property
+  def entity_enumerable(self) -> Iterable:
+    return enumerate(self.engine.entity_list)
+
   def on_render(self, console: tcod.Console) -> None:
     super().on_render(console)
     number_of_entities = len(self.engine.entity_list)
@@ -483,20 +488,31 @@ class SpawnerMenuHandler(AskUserEventHandler):
     )
     
     if number_of_entities > 0:
-      for i, entity in enumerate(self.engine.entity_list):
+      for i, entity in self.entity_enumerable:
         entity_key = chr(ord('a') + i)
-        # console.print(x + 1, y + i + 1, f'({item_key}) {item.name}')
-
-        # is_equipped = self.engine.player.equipment.item_is_equipped(item)
 
         entity_string = f'({entity_key}) {entity}'
-
-        # if is_equipped:
-        #   item_string = f'{item_string} (E)'
 
         console.print(x + 1, y + i + 1, entity_string)
     else:
       console.print(x + 1, y + 1, '(Empty)')
+
+  def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+    # player = self.engine.player
+    key = event.sym
+    index = key - tcod.event.KeySym.a
+
+    if 0 <= index <= 26:
+      try:
+        # selected_item = player.inventory.items[index]
+        print(list(self.entity_enumerable))
+        entity_to_spawn = self.engine.entity_list[list(self.entity_enumerable)[index][1]]
+      except IndexError:
+        self.engine.message_log.add_message('Invalid entry.', color.invalid)
+        return None
+      # return self.on_item_selected(selected_item)
+      return SpawnPlacementHandler(self.engine, entity_to_spawn)
+    return super().ev_keydown(event)
 
   
 class SelectIndexHandler(AskUserEventHandler):
@@ -556,6 +572,15 @@ class PlayerTeleportHandler(SelectIndexHandler):
   def on_index_selected(self, x: int, y: int) -> None:
     self.engine.player.x = x
     self.engine.player.y = y
+    return MainGameEventHandler(self.engine)
+  
+class SpawnPlacementHandler(SelectIndexHandler):
+  def __init__(self, engine: Engine, entity: Entity):
+    super().__init__(engine)
+    self.entity = entity
+
+  def on_index_selected(self, x: int, y: int) -> None:
+    self.entity.spawn(self.engine.game_map, x, y)
     return MainGameEventHandler(self.engine)
 
 class SingleRangedAttackHandler(SelectIndexHandler):
