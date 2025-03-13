@@ -227,9 +227,9 @@ class DebugMenuEventHandler(AskUserEventHandler):
     )
     '''
     TO DO!
-    -ghost player
+    -ghost player -- done!
     -freeze events
-    -teleport
+    -teleport -- done!
     -spawner
     -auto-wait -- this needs a lot more thought
     '''
@@ -600,7 +600,7 @@ class MainGameEventHandler(EventHandler):
       return DebugMenuEventHandler(self.engine)
     
     #debug tools
-    elif key == tcod.event.KeySym.KP_PLUS:
+    elif key == tcod.event.KeySym.KP_MULTIPLY:
       if self.engine.player_teleport == True:
         return PlayerTeleportHandler(self.engine)
     
