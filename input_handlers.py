@@ -453,6 +453,7 @@ class SpawnerMenuHandler(AskUserEventHandler):
   def __init__(self, engine: Engine):
     super().__init__(engine)
     self.TITLE = 'Spawner Menu'
+    self.multispawn = False
 
   @property
   def entity_enumerable(self) -> Iterable:
@@ -474,7 +475,7 @@ class SpawnerMenuHandler(AskUserEventHandler):
 
     y = 0
 
-    width = len(self.TITLE) + 10
+    width = len(self.TITLE) + 20
       
     console.draw_frame(
       x=x,
@@ -487,31 +488,36 @@ class SpawnerMenuHandler(AskUserEventHandler):
       bg=(0, 0, 0),
     )
     
+    console.print(x + 1, y + 1, f'TAB) multi-spawn? [{self.multispawn}]')
+
     if number_of_entities > 0:
       for i, entity in self.entity_enumerable:
         entity_key = chr(ord('a') + i)
 
         entity_string = f'({entity_key}) {entity}'
 
-        console.print(x + 1, y + i + 1, entity_string)
+        console.print(x + 1, y + i + 2, entity_string)
     else:
       console.print(x + 1, y + 1, '(Empty)')
 
   def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
     # player = self.engine.player
     key = event.sym
-    index = key - tcod.event.KeySym.a
-
-    if 0 <= index <= 26:
-      try:
-        # selected_item = player.inventory.items[index]
-        print(list(self.entity_enumerable))
-        entity_to_spawn = self.engine.entity_list[list(self.entity_enumerable)[index][1]]
-      except IndexError:
-        self.engine.message_log.add_message('Invalid entry.', color.invalid)
-        return None
-      # return self.on_item_selected(selected_item)
-      return SpawnPlacementHandler(self.engine, entity_to_spawn)
+    if key == tcod.event.KeySym.TAB:
+      self.multispawn = not self.multispawn
+      return None
+    else:
+      index = key - tcod.event.KeySym.a
+      if 0 <= index <= 26:
+        try:
+          # selected_item = player.inventory.items[index]
+          # print(list(self.entity_enumerable))
+          entity_to_spawn = self.engine.entity_list[list(self.entity_enumerable)[index][1]]
+        except IndexError:
+          self.engine.message_log.add_message('Invalid entry.', color.invalid)
+          return None
+        # return self.on_item_selected(selected_item)
+        return SpawnPlacementHandler(self.engine, entity_to_spawn, self.multispawn)
     return super().ev_keydown(event)
 
   
@@ -575,13 +581,17 @@ class PlayerTeleportHandler(SelectIndexHandler):
     return MainGameEventHandler(self.engine)
   
 class SpawnPlacementHandler(SelectIndexHandler):
-  def __init__(self, engine: Engine, entity: Entity):
+  def __init__(self, engine: Engine, entity: Entity, multispawn: bool):
     super().__init__(engine)
     self.entity = entity
+    self.multispawn = multispawn
 
   def on_index_selected(self, x: int, y: int) -> None:
     self.entity.spawn(self.engine.game_map, x, y)
-    return MainGameEventHandler(self.engine)
+    if self.multispawn == False:
+      return MainGameEventHandler(self.engine)
+    else:
+      return None
 
 class SingleRangedAttackHandler(SelectIndexHandler):
   def __init__(
