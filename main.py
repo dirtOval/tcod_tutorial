@@ -9,6 +9,8 @@ import exceptions
 import input_handlers
 # from procgen import generate_dungeon
 import setup_game
+from actions import WaitAction
+from time import sleep
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
   if isinstance(handler, input_handlers.EventHandler):
@@ -18,6 +20,7 @@ def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
 def main() -> None:
   screen_width = 80
   screen_height = 50
+  auto_speed = 0.5
 
   tileset = tcod.tileset.load_tilesheet(
     'dejavu10x10_gs_tc.png', 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -39,17 +42,20 @@ def main() -> None:
         root_console.clear()
         handler.on_render(console=root_console)
         context.present(root_console)
-
-        try:
-          for event in tcod.event.wait():
-            context.convert_event(event)
-            handler = handler.handle_events(event)
-        except Exception:
-          traceback.print_exc()
-          if isinstance(handler, input_handlers.EventHandler):
-            handler.engine.message_log.add_message(
-              traceback.format_exc(), color.error
-            )
+        if isinstance(handler, input_handlers.MainGameEventHandler) and handler.engine.auto_wait:
+          handler = handler.handle_events(tcod.event.KeyDown(93, tcod.event.KeySym.KP_5, 0))
+          sleep(auto_speed)
+        else:
+          try:
+            for event in tcod.event.wait(timeout=auto_speed):
+              context.convert_event(event)
+              handler = handler.handle_events(event)
+          except Exception:
+            traceback.print_exc()
+            if isinstance(handler, input_handlers.EventHandler):
+              handler.engine.message_log.add_message(
+                traceback.format_exc(), color.error
+              )
     except exceptions.QuitWithoutSaving:
       raise
     except SystemExit: #saving this time

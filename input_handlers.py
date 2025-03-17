@@ -72,6 +72,8 @@ CONFIRM_KEYS = {
 ActionOrHandler = Union[Action, 'BaseEventHandler']
 
 class BaseEventHandler(tcod.event.EventDispatch[ActionOrHandler]):
+  #essentially: if the event returns an event handler, return that
+  #handler. otherwise, return the same event handler.
   def handle_events(self, event: tcod.event.Event) -> BaseEventHandler:
     state = self.dispatch(event)
     if isinstance(state, BaseEventHandler):
@@ -691,6 +693,9 @@ class MainGameEventHandler(EventHandler):
       
     elif key == tcod.event.KeySym.KP_PLUS:
       return SpawnerMenuHandler(self.engine)
+    
+    elif key == tcod.event.KeySym.KP_PERIOD:
+      self.engine.auto_wait = not self.engine.auto_wait
     
     #auto-wait enable -- NOT WORKING
     # elif key == tcod.event.KeySym.KP_PERIOD:
