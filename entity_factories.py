@@ -5,7 +5,7 @@ from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from components.spawner import GuardSpawner, VirusSpawner
-from entity import Actor, Item, MobSpawner, ResourceWell
+from entity import Actor, Item, Stackable, MobSpawner, ResourceWell
 
 # player = Entity(char='@', color=(255, 255, 255), name='Player', blocks_movement=True)
 player = Actor(
@@ -138,6 +138,22 @@ lightning_scroll = Item(
   color= (255, 255, 0),
   name='Lightning Scroll',
   consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
+)
+
+#ranged weapons
+bow = Item(
+  char=')',
+  color=(255, 0, 0),
+  name='Bow',
+  equippable=equippable.Bow()
+)
+
+#ammo
+quiver = Item(
+  char='^',
+  color=(155, 155, 155),
+  name='Quiver of Arrows',
+  consumable=consumable.AmmoConsumable(10)
 )
 
 #equipment -- tutorial

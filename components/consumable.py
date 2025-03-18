@@ -24,7 +24,8 @@ class Consumable(BaseComponent):
     return actions.ItemAction(consumer, self.parent)
   
   def activate(self, action: actions.ItemAction) -> None:
-    raise NotImplementedError() #abstract class lol
+    # raise NotImplementedError() #abstract class lol
+    raise Impossible('Item not useable.')
   
   def consume(self) -> None:
     #this is what actually gets rid of the item when used
@@ -32,6 +33,16 @@ class Consumable(BaseComponent):
     inventory = entity.parent
     if isinstance(inventory, components.inventory.Inventory):
       inventory.items.remove(entity)
+
+class AmmoConsumable(Consumable):
+  def __init__(self, stack_size: int):
+    self.stack_size = stack_size
+
+  def consume(self) -> None:
+    if self.stack_size > 1:
+      self.stack_size -= 1
+    else:
+      super().consume()
 
 class ConfusionConsumable(Consumable):
   def __init__(self, number_of_turns: int):
