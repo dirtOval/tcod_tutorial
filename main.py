@@ -42,20 +42,31 @@ def main() -> None:
         root_console.clear()
         handler.on_render(console=root_console)
         context.present(root_console)
-        if isinstance(handler, input_handlers.MainGameEventHandler) and handler.engine.auto_wait:
-          handler = handler.handle_events(tcod.event.KeyDown(93, tcod.event.KeySym.KP_5, 0))
-          sleep(auto_speed)
-        else:
-          try:
-            for event in tcod.event.wait(timeout=auto_speed):
-              context.convert_event(event)
-              handler = handler.handle_events(event)
-          except Exception:
-            traceback.print_exc()
-            if isinstance(handler, input_handlers.EventHandler):
-              handler.engine.message_log.add_message(
-                traceback.format_exc(), color.error
-              )
+        # if isinstance(handler, input_handlers.MainGameEventHandler) and handler.engine.auto_wait:
+        #   handler = handler.handle_events(tcod.event.KeyDown(93, tcod.event.KeySym.KP_5, 0))
+        #   sleep(auto_speed)
+        #   queue = tcod.event.get()
+        #   try:
+        #     next
+        #   # if next(queue):
+        #   #   handler.engine.auto_wait = False
+
+        #   #DOES NOT WORK RN.
+        #   #i think i need to make an input handler to deal
+        #   #with this. that can send actions to here.
+        #   #less jank than doing it on main and also can
+        #   #listen for ev_keydown to quit out
+        # else:
+        try:
+          for event in tcod.event.wait():
+            context.convert_event(event)
+            handler = handler.handle_events(event)
+        except Exception:
+          traceback.print_exc()
+          if isinstance(handler, input_handlers.EventHandler):
+            handler.engine.message_log.add_message(
+              traceback.format_exc(), color.error
+            )
     except exceptions.QuitWithoutSaving:
       raise
     except SystemExit: #saving this time
