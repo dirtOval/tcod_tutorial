@@ -215,6 +215,35 @@ class Item(Entity):
     if self.equippable:
       self.equippable.parent = self
 
+class Stackable(Item):
+  def __init__(
+      self,
+      *,
+      x: int = 0,
+      y: int = 0,
+      char: str = '?',
+      color: Tuple[int, int, int] = (255, 255, 255),
+      name: str = '<Unnamed>',
+      consumable: Optional[Consumable] = None,
+      equippable: Optional[Equippable] = None,
+      stack_size: int = 10
+  ):
+    super().__init__(
+      x=x,
+      y=y,
+      char=char,
+      color=color,
+      name=name,
+      blocks_movement=False,
+      render_order=RenderOrder.ITEM,
+      consumable=consumable,
+      equippable=equippable,
+    )
+    self.stack_size = stack_size
+
+  def get_name(self) -> str:
+    return f'{self.name} [{self.stack_size}]'
+
 class ResourceWell(Entity):
   #resources can be gathered here by workers
   def __init__(

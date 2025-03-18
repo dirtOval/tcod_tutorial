@@ -6,7 +6,9 @@ from components.base_component import BaseComponent
 from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
-  from entity import Item, Bullet
+  from entity import Item
+
+from entity_factories import Arrow
 
 class Equippable(BaseComponent):
   parent: Item
@@ -75,6 +77,6 @@ class ChainMail(Equippable):
   def __init__(self) -> None:
     super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=3)
 
-class Revolver(RangedWeapon):
+class Bow(RangedWeapon):
   def __init__(self) -> None:
     super().__init__(defense_bonus=0, power_bonus=10, range=10, ammo_type=Bullet)
