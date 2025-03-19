@@ -120,6 +120,16 @@ class ActionWithDirection(Action):
   def perform(self) -> None:
     raise NotImplementedError()
   
+class ActionWithTarget(Action):
+  def __init__(self, entity: Actor, x: int, y: int):
+    super().__init__(entity)
+    self.x = x
+    self.y = y
+
+  @property
+  def target_actor(self) -> Optional[Actor]:
+    return self.engine.game_map.get_actor_at_location(self.x, self.y)
+  
 class MeleeAction(ActionWithDirection):
   def perform(self) -> None:
     target = self.target_actor
