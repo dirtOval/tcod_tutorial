@@ -8,7 +8,7 @@ from equipment_types import EquipmentType
 if TYPE_CHECKING:
   from entity import Item
 
-from entity_factories import Arrow
+# from entity_factories import Arrow
 
 class Equippable(BaseComponent):
   parent: Item
@@ -29,12 +29,13 @@ class Weapon(Equippable):
 
   def __init__(
     self,
+    equipment_type: EquipmentType = EquipmentType.WEAPON,
     power_bonus: int = 0,
     defense_bonus: int = 0,
     armor_penetration: int = 0
   ):
     super().__init__(
-      equipment_type = EquipmentType.WEAPON,
+      equipment_type = equipment_type,
       power_bonus=power_bonus,
       defense_bonus=defense_bonus
     )
@@ -79,4 +80,5 @@ class ChainMail(Equippable):
 
 class Bow(RangedWeapon):
   def __init__(self) -> None:
-    super().__init__(defense_bonus=0, power_bonus=10, range=10, ammo_type=Bullet)
+    #add ammo later!
+    super().__init__(defense_bonus=0, power_bonus=10, range=10)

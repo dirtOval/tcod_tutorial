@@ -581,7 +581,7 @@ class PlayerTeleportHandler(SelectIndexHandler):
     self.engine.player.x = x
     self.engine.player.y = y
     return MainGameEventHandler(self.engine)
-  
+
 class SpawnPlacementHandler(SelectIndexHandler):
   def __init__(self, engine: Engine, entity: Entity, multispawn: bool):
     super().__init__(engine)
@@ -676,6 +676,12 @@ class MainGameEventHandler(EventHandler):
 
     elif key == tcod.event.KeySym.l:
       return LookHandler(self.engine)
+    
+    elif key == tcod.event.KeySym.f:
+      return SingleRangedAttackHandler(
+        self.engine,
+        callback=lambda xy: actions.RangedAction(self.engine.player, xy),
+      )
     
     elif key == tcod.event.KeySym.c:
       return CharacterScreenEventHandler(self.engine)

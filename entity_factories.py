@@ -5,7 +5,7 @@ from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from components.spawner import GuardSpawner, VirusSpawner
-from entity import Actor, Item, Stackable, MobSpawner, ResourceWell
+from entity import Actor, Item, MobSpawner, ResourceWell
 
 # player = Entity(char='@', color=(255, 255, 255), name='Player', blocks_movement=True)
 player = Actor(

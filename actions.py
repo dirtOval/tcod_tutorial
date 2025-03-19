@@ -121,14 +121,13 @@ class ActionWithDirection(Action):
     raise NotImplementedError()
   
 class ActionWithTarget(Action):
-  def __init__(self, entity: Actor, x: int, y: int):
+  def __init__(self, entity: Actor, target_xy: Tuple[int, int]):
     super().__init__(entity)
-    self.x = x
-    self.y = y
+    self.target_xy = target_xy
 
   @property
   def target_actor(self) -> Optional[Actor]:
-    return self.engine.game_map.get_actor_at_location(self.x, self.y)
+    return self.engine.game_map.get_actor_at_location(*self.target_xy)
   
 class MeleeAction(ActionWithDirection):
   def perform(self) -> None:
@@ -159,6 +158,42 @@ class MeleeAction(ActionWithDirection):
     
     #placeholder lmao
     # print(f'You kick the {target.name}, dealing 1,000,000 damage')
+
+class RangedAction(ActionWithTarget):
+  def perform(self) -> None:
+    if self.entity.equipment.ranged is None:
+      raise exceptions.Impossible('You do not have a ranged weapon equipped!')
+    weapon = self.entity.equipment.ranged
+    #add ammo later!
+    # ammo = [item for item in self.entity.inventory.items if item.name]
+    # if weapon.ammo_type not in self.entity.inventory.items:
+    #   raise exceptions.Impossible(f'Out of ammo for {weapon}!')
+    if self.entity.distance(*self.target_xy) > weapon.equippable.range:
+      raise exceptions.Impossible('Out of range!')
+    target = self.target_actor
+    if not target:
+      raise exceptions.Impossible('Nothing to shoot there.')
+    
+    
+    damage = weapon.equippable.power_bonus - target.fighter.defense
+
+    attack_desc = f'{self.entity.name.capitalize()} shoots {target.name} with {weapon.name}'
+    if self.entity is self.engine.player:
+      attack_color = color.player_atk
+    else:
+      attack_color = color.enemy_atk
+
+    if damage > 0:
+      # print(f'{attack_desc} for {damage} hit points.')
+      self.engine.message_log.add_message(
+        f'{attack_desc} for {damage} hit points.', attack_color
+      )
+      target.fighter.hp -= damage
+    else:
+      # print(f'{attack_desc} but does no damage')
+      self.engine.message_log.add_message(
+        f'{attack_desc} but does no damage', attack_color
+      )
 
 class MovementAction(ActionWithDirection):
   def perform(self) -> None:

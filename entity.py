@@ -215,11 +215,12 @@ class Item(Entity):
     if self.equippable:
       self.equippable.parent = self
 
-  def get_name(self) -> str:
-    if self.consumable and isinstance(self.consumable, AmmoConsumable):
-      return f'{self.name} [{self.consumable.stack_size}]'
-    else:
-      super.get_name()
+  #trying to make stacks show up properly, doesnt work
+  # def get_name(self) -> str:
+  #   if self.consumable and isinstance(self.consumable, AmmoConsumable):
+  #     return f'{self.name} [{self.consumable.stack_size}]'
+  #   else:
+  #     super().get_name()
 
 # class Stackable(Item):
 #   def __init__(
