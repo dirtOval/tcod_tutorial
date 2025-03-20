@@ -10,7 +10,7 @@ from actions import Action, MeleeAction, MovementAction, WaitAction, BumpAction
 # from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
-  from entity import Actor, MobSpawner
+  from entity import Actor, MobSpawner, ResourceWell
 
 # class BaseAI(Action, BaseComponent):
 class BaseAI(Action):
@@ -117,7 +117,11 @@ class Combatant(BaseAI):
     return WaitAction(self.entity).perform()
   
 class Miner(BaseAI):
-  pass
+  def get_closest_resource(self) -> ResourceWell:
+    return self.entity.get_closest_entity(
+      [entity for entity in self.entity.gamemap.entities
+        if isinstance(entity, ResourceWell)]
+    )
 
 class SpawnerAI(BaseAI):
   def __init__(self, entity: MobSpawner):
