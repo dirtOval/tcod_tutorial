@@ -36,7 +36,7 @@ guard = Actor(
 
 miner = Actor(
   char='m',
-  color=(0, 0, 200),
+  color=(20, 255, 255),
   name='Miner',
   ai_cls=Miner,
   equipment=Equipment(),
@@ -85,7 +85,7 @@ guard_spawner = MobSpawner(
 
 #resource items
 crystal = Item(
-  'c',
+  char='c',
   color=(7, 227, 247),
   name='Crystal',
 )
@@ -97,7 +97,7 @@ crystal_well = Resource(
   name='Crystal Well',
   harvestable = Harvestable(
     resource_item=crystal,
-    capacity=10,
+    capacity=1,
     portion=1,
   )
 )

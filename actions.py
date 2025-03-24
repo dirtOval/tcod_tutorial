@@ -179,7 +179,7 @@ class MineAction(ActionWithDirection):
       msg_color = color.enemy_mine
 
     target.harvestable.decrement()
-    self.inventory.items.append(target.resource_item)
+    self.entity.inventory.items.append(target.harvestable.resource_item)
 
     self.engine.message_log.add_message(mine_desc, msg_color)
 

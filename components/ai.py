@@ -130,30 +130,48 @@ class Miner(BaseAI):
 
   def get_closest_resource(self) -> Resource:
     return self.entity.get_closest_entity(
-      [entity for entity in self.entity.gamemap.entities
-        if isinstance(entity, Resource)]
+      [entity for entity in self.entity.gamemap.resources]
     )
   
+  def seek_resource(self, target: Resource) -> None:
+    dx = target.x - self.entity.x
+    dy = target.y - self.entity.y
+    distance = max(abs(dx), abs(dy))
+
+    if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+      if distance <= 1:
+        return MineAction(self.entity, dx, dy).perform()
+      
+      self.path = self.get_path_to(target.x, target.y)
+
+    if self.path:
+      dest_x, dest_y = self.path.pop(0)
+      return MovementAction(
+        self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
+      ).perform()
+  
   def perform(self) -> None:
+
     target = self.get_closest_resource()
+    can_harvest = len(self.entity.inventory.items) < self.entity.inventory.capacity
 
-    #repeating from combatant, should make this reuseable tbh
-    if target:
-      dx = target.x - self.entity.x
-      dy = target.y - self.entity.y
-      distance = max(abs(dx), abs(dy))
+    if can_harvest and target:
+      self.seek_resource(target)
+      # dx = target.x - self.entity.x
+      # dy = target.y - self.entity.y
+      # distance = max(abs(dx), abs(dy))
 
-      if self.engine.game_map.visible[self.entity.x, self.entity.y]:
-        if distance <= 1:
-          return MineAction(self.entity, dx, dy).perform()
+      # if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+      #   if distance <= 1:
+      #     return MineAction(self.entity, dx, dy).perform()
         
-        self.path = self.get_path_to(target.x, target.y)
+      #   self.path = self.get_path_to(target.x, target.y)
 
-      if self.path:
-        dest_x, dest_y = self.path.pop(0)
-        return MovementAction(
-          self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
-        ).perform()
+      # if self.path:
+      #   dest_x, dest_y = self.path.pop(0)
+      #   return MovementAction(
+      #     self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
+      #   ).perform()
     
     return WaitAction(self.entity).perform()
     

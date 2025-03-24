@@ -274,6 +274,7 @@ class Resource(Entity):
     )
 
     self.harvestable = harvestable
+    self.harvestable.parent = self
 
   def get_name(self) -> str:
     return f'{self.name} [{self.harvestable.capacity}]'
