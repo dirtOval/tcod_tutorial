@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple, TYPE_CHECKING
 import numpy as np
 import tcod
 
-from actions import Action, MeleeAction, MovementAction, WaitAction, BumpAction
+from actions import Action, MeleeAction, MineAction, MovementAction, WaitAction, BumpAction
 # from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
@@ -18,6 +18,12 @@ class BaseAI(Action):
 
   def perform(self) -> None:
     raise NotImplementedError()
+  
+  #is this useful? idk
+  def get_distance(self, x: int, y: int):
+    dx = x - self.entity.x
+    dy = y - self.entity.y
+    return max(abs(dx), abs(dy))
   
   def get_path_to(self, dest_x: int, dest_y: int) -> List[Tuple[int, int]]:
     #list bc it returns a coordinate path
@@ -117,6 +123,11 @@ class Combatant(BaseAI):
     return WaitAction(self.entity).perform()
   
 class Miner(BaseAI):
+
+  def __init__(self, entity: Actor):
+    super().__init__(entity)
+    self.path: List[Tuple[int, int]] = []
+
   def get_closest_resource(self) -> Resource:
     return self.entity.get_closest_entity(
       [entity for entity in self.entity.gamemap.entities
@@ -124,6 +135,27 @@ class Miner(BaseAI):
     )
   
   def perform(self) -> None:
+    target = self.get_closest_resource()
+
+    #repeating from combatant, should make this reuseable tbh
+    if target:
+      dx = target.x - self.entity.x
+      dy = target.y - self.entity.y
+      distance = max(abs(dx), abs(dy))
+
+      if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+        if distance <= 1:
+          return MineAction(self.entity, dx, dy).perform()
+        
+        self.path = self.get_path_to(target.x, target.y)
+
+      if self.path:
+        dest_x, dest_y = self.path.pop(0)
+        return MovementAction(
+          self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
+        ).perform()
+    
+    return WaitAction(self.entity).perform()
     
 
 class SpawnerAI(BaseAI):
