@@ -76,6 +76,11 @@ class Fighter(BaseComponent):
     '''
     # self.engine.player.level.add_xp(self.parent.level.xp_given)
 
+    #drop items on death
+    if self.parent.inventory:
+      for item in self.parent.inventory.items:
+        item.place(self.parent.x, self.parent.y, self.gamemap)
+
   def heal(self, amount: int) -> int:
     if self.hp == self.max_hp:
       return 0

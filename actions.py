@@ -7,7 +7,7 @@ import exceptions
 
 if TYPE_CHECKING:
   from engine import Engine
-  from entity import Entity, Actor, Item
+  from entity import Entity, Actor, Item, Resource
 
 class Action:
   def __init__(self, entity: Actor) -> None:
@@ -139,6 +139,7 @@ class MeleeAction(ActionWithDirection):
     damage = self.entity.fighter.power - target.fighter.defense
 
     attack_desc = f'{self.entity.name.capitalize()} attacks {target.name}'
+    
     if self.entity is self.engine.player:
       attack_color = color.player_atk
     else:
@@ -158,6 +159,29 @@ class MeleeAction(ActionWithDirection):
     
     #placeholder lmao
     # print(f'You kick the {target.name}, dealing 1,000,000 damage')
+
+class MineAction(ActionWithDirection):
+  @property
+  def target_resource(self) -> Optional[Resource]:
+    return self.engine.game_map.get_resource_at_location(*self.dest_xy)
+  def perform(self) -> None:
+    target = self.target_resource
+    if not target:
+      # return
+      raise exceptions.Impossible('Nothing to mine.')
+    
+    #prob dont want this in play, for testing we leave it on for now
+    mine_desc = f'{self.entity.name.capitalize()} mines {target.name}'
+
+    if self.entity.faction == 'player':
+      msg_color = color.ally_mine
+    else:
+      msg_color = color.enemy_mine
+
+    target.harvestable.decrement()
+    self.inventory.items.append(target.resource_item)
+
+    self.engine.message_log.add_message(mine_desc, msg_color)
 
 class RangedAction(ActionWithTarget):
   def perform(self) -> None:

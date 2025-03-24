@@ -1,5 +1,6 @@
 from components.ai import Combatant, Miner, SpawnerAI
-from components import consumable, equippable, harvestable
+from components import consumable, equippable
+from components.harvestable import Harvestable
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
@@ -42,7 +43,7 @@ miner = Actor(
   fighter=Fighter(hp=5, base_defense=0, base_power=1),
   inventory=Inventory(capacity=1),
   level=Level(xp_given=0),
-  faction='neutral',
+  faction='player',
 )
 
 #hostile mobs
@@ -82,13 +83,25 @@ guard_spawner = MobSpawner(
   faction='player',
 )
 
+#resource items
+crystal = Item(
+  'c',
+  color=(7, 227, 247),
+  name='Crystal',
+)
+
 #resource wells
-crystal = Resource(
+crystal_well = Resource(
   char='C',
   color=(7, 227, 247),
   name='Crystal Well',
-  harvestable = harvestable.Crystal(100)
+  harvestable = Harvestable(
+    resource_item=crystal,
+    capacity=10,
+    portion=1,
+  )
 )
+
 
 #TUTORIAL STUFF-------------------------------------------
 orc = Actor(

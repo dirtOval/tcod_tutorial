@@ -4,7 +4,7 @@ from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 import numpy as np
 from tcod.console import Console
 
-from entity import Actor, Item
+from entity import Actor, Item, Resource
 import tile_types
 
 if TYPE_CHECKING:
@@ -45,6 +45,10 @@ class GameMap:
   def items(self) -> Iterator[Item]:
     yield from (entity for entity in self.entities if isinstance(entity, Item))
 
+  @property
+  def resources(self) -> Iterator[Resource]:
+    yield from (entity for entity in self.entities if isinstance(entity, Resource))
+
   def get_blocking_entity_at_location(
       self, location_x: int, location_y: int
   ) -> Optional[Entity]:
@@ -64,6 +68,11 @@ class GameMap:
         return actor
       
     return None
+  
+  def get_resource_at_location(self, x: int, y: int) -> Optional[Resource]:
+    for resource in self.resources:
+      if resource.x == x and resource.y == y:
+        return resource
 
   def in_bounds(self, x: int, y: int) -> bool:
     return 0 <= x < self.width and 0 <= y < self.height
