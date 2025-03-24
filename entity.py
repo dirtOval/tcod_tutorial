@@ -251,7 +251,7 @@ class Item(Entity):
 #   def get_name(self) -> str:
 #     return f'{self.name} [{self.stack_size}]'
 
-class ResourceWell(Entity):
+class Resource(Entity):
   #resources can be gathered here by workers
   def __init__(
     self,

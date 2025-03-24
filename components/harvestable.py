@@ -5,10 +5,10 @@ from components.base_component import BaseComponent
 from resource_types import ResourceType
 
 if TYPE_CHECKING:
-  from entity import ResourceWell
+  from entity import Resource
 
 class Harvestable(BaseComponent):
-  parent: ResourceWell
+  parent: Resource
 
   def __init__(
       self,
