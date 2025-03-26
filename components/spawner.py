@@ -61,7 +61,7 @@ class EcoSpawner(Spawner):
   def try_to_spawn(self) -> None:
     if self.bank >= self.spawn_cost:
       self.spawn_mob()
-      self.parent.bank -= self.spawn_cost
+      self.bank -= self.spawn_cost
 #superfluous, can set these in entity_factories and skip the import.
 
 # class VirusTimerSpawner(TimerSpawner):

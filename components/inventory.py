@@ -18,3 +18,6 @@ class Inventory(BaseComponent):
     self.items.remove(item)
     item.place(self.parent.x, self.parent.y, self.gamemap)
     self.engine.message_log.add_message(f'{self.parent.name} dropped the {item.name}.')
+
+  def clear(self) -> None:
+    self.items = []

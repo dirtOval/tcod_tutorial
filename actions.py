@@ -5,6 +5,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 import color
 import exceptions
 
+from entity import MobSpawner
 if TYPE_CHECKING:
   from engine import Engine
   from entity import Entity, Actor, Item, Resource
@@ -182,6 +183,23 @@ class MineAction(ActionWithDirection):
     self.entity.inventory.items.append(target.harvestable.resource_item)
 
     self.engine.message_log.add_message(mine_desc, msg_color)
+
+class DepositAction(ActionWithDirection):
+  @property
+  def target_actor(self) -> Optional[Actor]:
+    #get actor at action destination
+    return self.engine.game_map.get_actor_at_location(*self.dest_xy, MobSpawner)
+  
+  def perform(self) -> None:
+    target = self.target_actor
+    if not target:
+      raise exceptions.Impossible('No spawner to deposit.')
+    deposit_amt = len(self.entity.inventory.items)
+    deposit_msg = f'{self.entity.name} deposits {deposit_amt} into {target.name}'
+    msg_color = color.ally_mine
+    target.spawner.add_to_bank(deposit_amt)
+    self.entity.inventory.clear()
+    self.engine.message_log.add_message(deposit_msg, msg_color)
 
 class RangedAction(ActionWithTarget):
   def perform(self) -> None:

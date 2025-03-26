@@ -1,4 +1,4 @@
-from components.ai import Combatant, Miner, TimerSpawnerAI, EcoSpawnerAI
+import components.ai as ai
 from components import consumable, equippable
 from components.harvestable import Harvestable
 from components.equipment import Equipment
@@ -13,7 +13,7 @@ player = Actor(
   char='@',
   color=(255, 255, 255),
   name='Player',
-  ai_cls=Combatant,
+  ai_cls=ai.Combatant,
   equipment=Equipment(),
   fighter=Fighter(hp=30, base_defense=1, base_power=2),
   inventory=Inventory(capacity=26),
@@ -26,7 +26,7 @@ guard = Actor(
   char='g',
   color=(255, 0, 200),
   name='Guard',
-  ai_cls=Combatant,
+  ai_cls=ai.Combatant,
   equipment=Equipment(),
   fighter=Fighter(hp=10, base_defense=0, base_power=4),
   inventory=Inventory(capacity=1),
@@ -38,7 +38,7 @@ miner = Actor(
   char='m',
   color=(20, 255, 255),
   name='Miner',
-  ai_cls=Miner,
+  ai_cls=ai.MinerAI,
   equipment=Equipment(),
   fighter=Fighter(hp=5, base_defense=0, base_power=1),
   inventory=Inventory(capacity=1),
@@ -51,7 +51,7 @@ virus = Actor(
   char='v',
   color=(0, 175, 175),
   name='Virus',
-  ai_cls=Combatant,
+  ai_cls=ai.Combatant,
   equipment=Equipment(),
   fighter=Fighter(hp=10, base_defense=0, base_power=4),
   inventory=Inventory(capacity=0),
@@ -67,7 +67,7 @@ virus_timer_spawner = MobSpawner(
   name='Virus TimerSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
-  ai_cls=TimerSpawnerAI,
+  ai_cls=ai.TimerSpawnerAI,
   spawner=TimerSpawner(virus, 5),
   faction='hostile',
 )
@@ -78,8 +78,8 @@ guard_eco_spawner = MobSpawner(
   name='Guard EcoSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
-  ai_cls=EcoSpawnerAI,
-  spawner=EcoSpawner(guard, 2, 0),
+  ai_cls=ai.EcoSpawnerAI,
+  spawner=EcoSpawner(guard, 1, 0),
   faction='player',
 )
 
@@ -89,7 +89,7 @@ guard_timer_spawner = MobSpawner(
   name='Guard TimerSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
-  ai_cls=TimerSpawnerAI,
+  ai_cls=ai.TimerSpawnerAI,
   spawner=TimerSpawner(guard, 5),
   faction='player',
 )
@@ -119,7 +119,7 @@ orc = Actor(
   char='o',
   color=(63, 127, 63),
   name='Orc',
-  ai_cls=Combatant,
+  ai_cls=ai.Combatant,
   equipment=Equipment(),
   fighter=Fighter(hp=10, base_defense=0, base_power=4),
   inventory=Inventory(capacity=0),
@@ -130,7 +130,7 @@ troll = Actor(
   char='T',
   color=(0, 127, 0),
   name='Troll',
-  ai_cls=Combatant,
+  ai_cls=ai.Combatant,
   equipment=Equipment(),
   fighter=Fighter(hp=16, base_defense=1, base_power=8),
   inventory=Inventory(capacity=0),

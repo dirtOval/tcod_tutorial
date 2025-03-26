@@ -62,9 +62,10 @@ class GameMap:
       
     return None
   
-  def get_actor_at_location(self, x: int, y: int) -> Optional[Actor]:
+  #type lets you filter by subclass. lets see if this breaks shit lmao
+  def get_actor_at_location(self, x: int, y: int, type: Actor = Actor) -> Optional[Actor]:
     for actor in self.actors:
-      if actor.x == x and actor.y == y:
+      if actor.x == x and actor.y == y and isinstance(actor, type):
         return actor
       
     return None

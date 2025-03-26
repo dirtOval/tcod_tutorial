@@ -6,11 +6,12 @@ from typing import List, Optional, Tuple, TYPE_CHECKING
 import numpy as np
 import tcod
 
-from actions import Action, MeleeAction, MineAction, MovementAction, WaitAction, BumpAction
+from actions import Action, DepositAction, MeleeAction, MineAction, MovementAction, WaitAction, BumpAction
 # from components.base_component import BaseComponent
 
+from entity import MobSpawner
 if TYPE_CHECKING:
-  from entity import Actor, MobSpawner, Resource
+  from entity import Actor, Resource
 
 # class BaseAI(Action, BaseComponent):
 class BaseAI(Action):
@@ -122,7 +123,7 @@ class Combatant(BaseAI):
     
     return WaitAction(self.entity).perform()
   
-class Miner(BaseAI):
+class MinerAI(BaseAI):
 
   def __init__(self, entity: Actor):
     super().__init__(entity)
@@ -133,30 +134,56 @@ class Miner(BaseAI):
       [entity for entity in self.entity.gamemap.resources]
     )
   
-  def seek_resource(self, target: Resource) -> None:
-    dx = target.x - self.entity.x
-    dy = target.y - self.entity.y
-    distance = max(abs(dx), abs(dy))
+  def get_closest_friendly_spawner(self) -> MobSpawner:
+    return self.entity.get_closest_entity(
+      [entity for entity in self.entity.gamemap.actors if isinstance(entity, MobSpawner) and entity.faction == self.entity.faction]
+    )
+  
+  #pathing to target and executing action if in range and movement otherwise could be its own function.
+  def seek_resource(self) -> None:
+    target = self.get_closest_resource()
+    if target:
+      dx = target.x - self.entity.x
+      dy = target.y - self.entity.y
+      distance = max(abs(dx), abs(dy))
 
-    if self.engine.game_map.visible[self.entity.x, self.entity.y]:
-      if distance <= 1:
-        return MineAction(self.entity, dx, dy).perform()
-      
-      self.path = self.get_path_to(target.x, target.y)
+      if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+        if distance <= 1:
+          return MineAction(self.entity, dx, dy).perform()
+        
+        self.path = self.get_path_to(target.x, target.y)
 
-    if self.path:
-      dest_x, dest_y = self.path.pop(0)
-      return MovementAction(
-        self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
-      ).perform()
+      if self.path:
+        dest_x, dest_y = self.path.pop(0)
+        return MovementAction(
+          self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
+        ).perform()
+    
+  def seek_spawner(self) -> None:
+    target = self.get_closest_friendly_spawner()
+    if target:
+      dx = target.x - self.entity.x
+      dy = target.y - self.entity.y
+      distance = max(abs(dx), abs(dy))
+
+      if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+        if distance <= 1:
+          return DepositAction(self.entity, dx, dy).perform()
+        
+        self.path = self.get_path_to(target.x, target.y)
+
+      if self.path:
+        dest_x, dest_y = self.path.pop(0)
+        return MovementAction(
+          self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
+        ).perform()
   
   def perform(self) -> None:
 
-    target = self.get_closest_resource()
     can_harvest = len(self.entity.inventory.items) < self.entity.inventory.capacity
 
-    if can_harvest and target:
-      self.seek_resource(target)
+    if can_harvest:
+      self.seek_resource()
       # dx = target.x - self.entity.x
       # dy = target.y - self.entity.y
       # distance = max(abs(dx), abs(dy))
@@ -172,13 +199,18 @@ class Miner(BaseAI):
       #   return MovementAction(
       #     self.entity, dest_x - self.entity.x, dest_y - self.entity.y,
       #   ).perform()
+    else:
+      self.seek_spawner()
     
     return WaitAction(self.entity).perform()
     
 
+#these two could probably be the same,
+#overload their spawn mechanism with same name. derp.
 class EcoSpawnerAI(BaseAI):
   def perform(self) -> None:
-    pass
+    self.entity.spawner.try_to_spawn()
+    return WaitAction(self.entity).perform()
 
 class TimerSpawnerAI(BaseAI):
   def __init__(self, entity: MobSpawner):
