@@ -176,7 +176,11 @@ class Miner(BaseAI):
     return WaitAction(self.entity).perform()
     
 
-class SpawnerAI(BaseAI):
+class EcoSpawnerAI(BaseAI):
+  def perform(self) -> None:
+    pass
+
+class TimerSpawnerAI(BaseAI):
   def __init__(self, entity: MobSpawner):
     super().__init__(entity)
 

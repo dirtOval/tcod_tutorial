@@ -1,11 +1,11 @@
-from components.ai import Combatant, Miner, SpawnerAI
+from components.ai import Combatant, Miner, TimerSpawnerAI, EcoSpawnerAI
 from components import consumable, equippable
 from components.harvestable import Harvestable
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from components.spawner import GuardSpawner, VirusSpawner
+from components.spawner import TimerSpawner, EcoSpawner
 from entity import Actor, Item, MobSpawner, Resource
 
 # player = Entity(char='@', color=(255, 255, 255), name='Player', blocks_movement=True)
@@ -61,36 +61,36 @@ virus = Actor(
 
 
 #mob spawners
-virus_spawner = MobSpawner(
+virus_timer_spawner = MobSpawner(
   char='O',
   color=(0, 175, 175),
-  name='Virus Spawner',
+  name='Virus TimerSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
-  ai_cls=SpawnerAI,
-  spawner=VirusSpawner(),
+  ai_cls=TimerSpawnerAI,
+  spawner=TimerSpawner(virus, 5),
   faction='hostile',
 )
 
-eco_guard_spawner = MobSpawner(
+guard_eco_spawner = MobSpawner(
   char='O',
   color=(255, 0, 200),
-  name='Guard Spawner',
+  name='Guard EcoSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
-  ai_cls=SpawnerAI,
-  spawner=GuardSpawner(),
+  ai_cls=EcoSpawnerAI,
+  spawner=EcoSpawner(guard, 2, 0),
   faction='player',
 )
 
-guard_spawner = MobSpawner(
+guard_timer_spawner = MobSpawner(
   char='O',
   color=(255, 0, 200),
-  name='Guard Spawner',
+  name='Guard TimerSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
-  ai_cls=SpawnerAI,
-  spawner=GuardSpawner(),
+  ai_cls=TimerSpawnerAI,
+  spawner=TimerSpawner(guard, 5),
   faction='player',
 )
 

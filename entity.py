@@ -177,7 +177,8 @@ class MobSpawner(Actor):
       faction=faction,
     )
 
-    self.ai: Optional[BaseAI] = ai_cls(self)
+    #i think this is redundant? see if commenting out breaks spawners.
+    # self.ai: Optional[BaseAI] = ai_cls(self)
     
     self.spawner: Optional[Spawner] = spawner
     self.spawner.parent = self

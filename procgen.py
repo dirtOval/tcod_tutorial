@@ -193,7 +193,7 @@ def test_level( #for testing new mechanics, mobs, etc
 
   entity_factories.crystal_well.spawn(dungeon, 35, 25)
   entity_factories.miner.spawn(dungeon, 40, 25)
-  entity_factories.eco_guard_spawner(dungeon, 45, 25)
+  entity_factories.guard_eco_spawner.spawn(dungeon, 45, 25)
 
   #epic 4 way battle lmao
   # entity_factories.virus_spawner.spawn(dungeon, 20, 2)
