@@ -72,6 +72,17 @@ virus_spawner = MobSpawner(
   faction='hostile',
 )
 
+eco_guard_spawner = MobSpawner(
+  char='O',
+  color=(255, 0, 200),
+  name='Guard Spawner',
+  fighter=Fighter(hp=20, base_defense=3, base_power=0),
+  level=Level(xp_given=50),
+  ai_cls=SpawnerAI,
+  spawner=GuardSpawner(),
+  faction='player',
+)
+
 guard_spawner = MobSpawner(
   char='O',
   color=(255, 0, 200),
@@ -97,7 +108,7 @@ crystal_well = Resource(
   name='Crystal Well',
   harvestable = Harvestable(
     resource_item=crystal,
-    capacity=1,
+    capacity=10,
     portion=1,
   )
 )
