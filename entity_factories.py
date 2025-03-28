@@ -38,7 +38,7 @@ guard = Actor(
 guard_miner = Actor(
   char='m',
   color=guard_pink,
-  name='Miner',
+  name='Guard Miner',
   ai_cls=ai.MinerAI,
   equipment=Equipment(),
   fighter=Fighter(hp=5, base_defense=0, base_power=1),
@@ -60,15 +60,27 @@ virus = Actor(
   faction='hostile',
 )
 
+virus_miner = Actor(
+  char='m',
+  color=virus_teal,
+  name='Virus Miner',
+  ai_cls=ai.MinerAI,
+  equipment=Equipment(),
+  fighter=Fighter(hp=5, base_defense=0, base_power=1),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+  faction='hostile',
+)
+
 
 #mob spawners
 virus_eco_spawner = MobSpawner(
   char='O',
   color=virus_teal,
-  name='Virus TimerSpawner',
+  name='Virus EcoSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
-  ai_cls=ai.TimerSpawnerAI,
+  ai_cls=ai.EcoSpawnerAI,
   spawner=EcoSpawner(virus, 1, 0),
   faction='hostile',
 )
