@@ -191,9 +191,9 @@ def test_level( #for testing new mechanics, mobs, etc
   dungeon.tiles[room.inner] = tile_types.floor
   player.place(*room.center, dungeon)
 
-  entity_factories.crystal_well.spawn(dungeon, 35, 25)
-  entity_factories.miner.spawn(dungeon, 40, 25)
-  entity_factories.guard_eco_spawner.spawn(dungeon, 45, 25)
+  # entity_factories.crystal_well.spawn(dungeon, 35, 25)
+  # entity_factories.miner.spawn(dungeon, 40, 25)
+  # entity_factories.guard_eco_spawner.spawn(dungeon, 45, 25)
 
   #epic 4 way battle lmao
   # entity_factories.virus_spawner.spawn(dungeon, 20, 2)

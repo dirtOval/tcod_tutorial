@@ -7,6 +7,7 @@ from components.inventory import Inventory
 from components.level import Level
 from components.spawner import TimerSpawner, EcoSpawner
 from entity import Actor, Item, MobSpawner, Resource
+from color import guard_pink, virus_teal
 
 # player = Entity(char='@', color=(255, 255, 255), name='Player', blocks_movement=True)
 player = Actor(
@@ -24,7 +25,7 @@ player = Actor(
 #allied mobs
 guard = Actor(
   char='g',
-  color=(255, 0, 200),
+  color=guard_pink,
   name='Guard',
   ai_cls=ai.Combatant,
   equipment=Equipment(),
@@ -34,9 +35,9 @@ guard = Actor(
   faction='player'
 )
 
-miner = Actor(
+guard_miner = Actor(
   char='m',
-  color=(20, 255, 255),
+  color=guard_pink,
   name='Miner',
   ai_cls=ai.MinerAI,
   equipment=Equipment(),
@@ -49,7 +50,7 @@ miner = Actor(
 #hostile mobs
 virus = Actor(
   char='v',
-  color=(0, 175, 175),
+  color=virus_teal,
   name='Virus',
   ai_cls=ai.Combatant,
   equipment=Equipment(),
@@ -61,9 +62,20 @@ virus = Actor(
 
 
 #mob spawners
+virus_eco_spawner = MobSpawner(
+  char='O',
+  color=virus_teal,
+  name='Virus TimerSpawner',
+  fighter=Fighter(hp=20, base_defense=3, base_power=0),
+  level=Level(xp_given=50),
+  ai_cls=ai.TimerSpawnerAI,
+  spawner=EcoSpawner(virus, 1, 0),
+  faction='hostile',
+)
+
 virus_timer_spawner = MobSpawner(
   char='O',
-  color=(0, 175, 175),
+  color=virus_teal,
   name='Virus TimerSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
@@ -74,7 +86,7 @@ virus_timer_spawner = MobSpawner(
 
 guard_eco_spawner = MobSpawner(
   char='O',
-  color=(255, 0, 200),
+  color=guard_pink,
   name='Guard EcoSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
@@ -85,7 +97,7 @@ guard_eco_spawner = MobSpawner(
 
 guard_timer_spawner = MobSpawner(
   char='O',
-  color=(255, 0, 200),
+  color=guard_pink,
   name='Guard TimerSpawner',
   fighter=Fighter(hp=20, base_defense=3, base_power=0),
   level=Level(xp_given=50),
@@ -138,7 +150,7 @@ troll = Actor(
   faction='hostile',
 )
 
-#ITEMS -- TUTORIAL
+# #ITEMS -- TUTORIAL
 confusion_scroll = Item(
   char='~',
   color=(207, 63, 255),
