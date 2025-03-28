@@ -180,6 +180,13 @@ def tunnel_between(
 
   # return dungeon
 
+def generate_crystals(dungeon: GameMap, amount: int) -> None:
+  for crystal in range(amount):
+    x = random.randint(1, dungeon.width - 1)
+    y = random.randint(1, dungeon.height - 1)
+    if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+      entity_factories.crystal_well.spawn(dungeon, x, y)
+
 def test_level( #for testing new mechanics, mobs, etc
     map_width: int,
     map_height: int,
@@ -190,6 +197,7 @@ def test_level( #for testing new mechanics, mobs, etc
   room = RectangularRoom(1, 1, map_width - 2, map_height - 2)
   dungeon.tiles[room.inner] = tile_types.floor
   player.place(*room.center, dungeon)
+  generate_crystals(dungeon, 12)
 
   # entity_factories.crystal_well.spawn(dungeon, 35, 25)
   # entity_factories.miner.spawn(dungeon, 40, 25)
