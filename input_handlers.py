@@ -68,6 +68,13 @@ CONFIRM_KEYS = {
     tcod.event.KeySym.SPACE,
 }
 
+CURSOR_Y_KEYS = {
+    tcod.event.KeySym.UP: -1,
+    tcod.event.KeySym.DOWN: 1,
+    tcod.event.KeySym.PAGEUP: -10,
+    tcod.event.KeySym.PAGEDOWN: 10,
+}
+
 #look up how Union works
 ActionOrHandler = Union[Action, 'BaseEventHandler']
 
@@ -452,20 +459,39 @@ class InventoryDropHandler(InventoryEventHandler):
     return actions.DropItem(self.engine.player, item)
   
 class SpawnerMenuHandler(AskUserEventHandler):
+  #the solution right now is to paginate. first 26 items get grouped,
+  #then when player hits arrow key the next group of 26 gets grouped.
+  #if less than 26, it'll cycle back to top.
+  #can add a page variable, will use that to offset selection in pages after the first
   def __init__(self, engine: Engine):
     super().__init__(engine)
     self.TITLE = 'Spawner Menu'
     self.multispawn = False
+    self.number_of_entities = len(self.engine.entity_dict)
+    self.page = 1
 
+  #it seems inefficient to calculate this on the fly, but it bugs when i try to store it?
+  #maybe can just store the enumerable on engine? mess with this later.
   @property
-  def entity_enumerable(self) -> Iterable:
-    return enumerate(self.engine.entity_list)
+  def entity_list(self) -> Iterable:
+    # return enumerate(self.engine.entity_list)
+    return list(self.engine.entity_dict.values())
+
+  
+  @property
+  def current_page_contents(self) -> Iterable:
+    start = 0 + (26 * (self.page - 1))
+    end = 26 * self.page
+    if end > self.number_of_entities:
+      end = self.number_of_entities
+    return self.entity_list[start : end]
+    
+
 
   def on_render(self, console: tcod.Console) -> None:
     super().on_render(console)
-    number_of_entities = len(self.engine.entity_list)
 
-    height = number_of_entities + 2
+    height = self.number_of_entities + 2
 
     if height <= 3:
       height = 3
@@ -492,13 +518,15 @@ class SpawnerMenuHandler(AskUserEventHandler):
     
     console.print(x + 1, y + 1, f'TAB) multi-spawn? [{self.multispawn}]')
 
-    if number_of_entities > 0:
-      for i, entity in self.entity_enumerable:
+    if self.number_of_entities > 0:
+      # for i, entity in self.entity_enumerable:
+      for i, entity in enumerate(self.current_page_contents):
         entity_key = chr(ord('a') + i)
 
-        entity_string = f'({entity_key}) {entity}'
+        entity_string = f'({entity_key}) {entity.name}'
 
         console.print(x + 1, y + i + 2, entity_string)
+        # console.print(x + 1, y + i + 2, entity)
     else:
       console.print(x + 1, y + 1, '(Empty)')
 
@@ -743,12 +771,7 @@ class GameOverEventHandler(EventHandler):
     if event.sym == tcod.event.KeySym.ESCAPE:
       raise SystemExit()
   
-CURSOR_Y_KEYS = {
-    tcod.event.KeySym.UP: -1,
-    tcod.event.KeySym.DOWN: 1,
-    tcod.event.KeySym.PAGEUP: -10,
-    tcod.event.KeySym.PAGEDOWN: 10,
-}
+
 
 class HistoryViewer(EventHandler):
   def __init__(self, engine: Engine):

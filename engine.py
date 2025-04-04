@@ -33,7 +33,8 @@ class Engine:
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
-        self.entity_list = dict([(var, obj) for var, obj in entity_factories.__dict__.items() if isinstance(obj, Entity)])
+        #should write a script to import this on setup and turn it into a useful shape
+        self.entity_dict = dict([(var, obj) for var, obj in entity_factories.__dict__.items() if isinstance(obj, Entity)])
         # self.debug_mode = False
         #debug switches
         self.do_fov = True
