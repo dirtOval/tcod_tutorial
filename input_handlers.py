@@ -590,9 +590,9 @@ class SpawnerMenuHandler(AskUserEventHandler):
       return None
     elif key == tcod.event.KeySym.RIGHT:
       self.page += 1
-      print(f'page: {self.page}')
+      # print(f'page: {self.page}')
       if self.page > self.page_count:
-        print('rolling back to 1')
+        # print('rolling back to 1')
         # self.page = 1
         return SpawnerMenuHandler(self.engine, 1)
       else:
@@ -602,16 +602,17 @@ class SpawnerMenuHandler(AskUserEventHandler):
     elif key == tcod.event.KeySym.LEFT:
       self.page -= 1
       if self.page < 1:
-        self.page = self.page_count
-      self.render_contents()
-      return None
+        return SpawnerMenuHandler(self.engine, self.page_count)
+      else:
+        return SpawnerMenuHandler(self.engine, self.page)
     else:
       index = key - tcod.event.KeySym.a
       if 0 <= index <= 26:
         try:
           # selected_item = player.inventory.items[index]
           # print(list(self.entity_enumerable))
-          entity_to_spawn = self.engine.entity_dict[self.entity_list[index][0]]
+          entity_to_spawn = self.engine.entity_dict[self.entity_list[index + (self.page-1)*26][0]]
+          #^need to make this respect pagination!!
         except IndexError:
           self.engine.message_log.add_message('Invalid entry.', color.invalid)
           return None
