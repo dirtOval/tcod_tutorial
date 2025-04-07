@@ -35,6 +35,67 @@ guard = Actor(
   faction='player'
 )
 
+#for testing pagination
+guard2 = Actor(
+  char='g',
+  color=guard_pink,
+  name='Guard',
+  ai_cls=ai.Combatant,
+  equipment=Equipment(),
+  fighter=Fighter(hp=10, base_defense=0, base_power=4),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+  faction='player'
+)
+
+guard3 = Actor(
+  char='g',
+  color=guard_pink,
+  name='Guard',
+  ai_cls=ai.Combatant,
+  equipment=Equipment(),
+  fighter=Fighter(hp=10, base_defense=0, base_power=4),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+  faction='player'
+)
+
+guard4 = Actor(
+  char='g',
+  color=guard_pink,
+  name='Guard',
+  ai_cls=ai.Combatant,
+  equipment=Equipment(),
+  fighter=Fighter(hp=10, base_defense=0, base_power=4),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+  faction='player'
+)
+
+guard5 = Actor(
+  char='g',
+  color=guard_pink,
+  name='Guard',
+  ai_cls=ai.Combatant,
+  equipment=Equipment(),
+  fighter=Fighter(hp=10, base_defense=0, base_power=4),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+  faction='player'
+)
+
+guard6 = Actor(
+  char='g',
+  color=guard_pink,
+  name='Guard',
+  ai_cls=ai.Combatant,
+  equipment=Equipment(),
+  fighter=Fighter(hp=10, base_defense=0, base_power=4),
+  inventory=Inventory(capacity=1),
+  level=Level(xp_given=0),
+  faction='player'
+)
+
 guard_miner = Actor(
   char='m',
   color=guard_pink,

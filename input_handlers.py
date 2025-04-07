@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from math import ceil
 
 from typing import Callable, Iterable, Optional, Tuple, TYPE_CHECKING, Union
 
@@ -463,19 +464,25 @@ class SpawnerMenuHandler(AskUserEventHandler):
   #then when player hits arrow key the next group of 26 gets grouped.
   #if less than 26, it'll cycle back to top.
   #can add a page variable, will use that to offset selection in pages after the first
-  def __init__(self, engine: Engine):
+
+  #update: im dumb. just need to return another spawnermenu handler with the page initiated as the subsequent one.
+  #so i need to pass in the page, with 1 as default.
+
+  #not workign right now. pagination should be working but the console needs to rerender.
+  #probably need to make a sub console like in history viewer, just need to figure out how to do that.
+  def __init__(self, engine: Engine, page: int = 1):
     super().__init__(engine)
     self.TITLE = 'Spawner Menu'
     self.multispawn = False
     self.number_of_entities = len(self.engine.entity_dict)
-    self.page = 1
+    self.page = page
 
   #it seems inefficient to calculate this on the fly, but it bugs when i try to store it?
   #maybe can just store the enumerable on engine? mess with this later.
   @property
   def entity_list(self) -> Iterable:
     # return enumerate(self.engine.entity_list)
-    return list(self.engine.entity_dict.values())
+    return list(self.engine.entity_dict.items())
 
   
   @property
@@ -485,11 +492,56 @@ class SpawnerMenuHandler(AskUserEventHandler):
     if end > self.number_of_entities:
       end = self.number_of_entities
     return self.entity_list[start : end]
+  
+  @property
+  def page_count(self) -> int:
+    return ceil(self.number_of_entities / 26)
+  
+  # def render_contents(self, console: tcod.Console):
+  #   height = self.number_of_entities + 2
+
+  #   if height <= 3:
+  #     height = 3
+
+  #   if self.engine.player.x <= 30:
+  #     x = 40
+  #   else:
+  #     x = 0
+
+  #   y = 0
+
+  #   width = len(self.TITLE) + 20
+      
+  #   console.draw_frame(
+  #     x=x,
+  #     y=y,
+  #     width=width,
+  #     height=height,
+  #     title=self.TITLE,
+  #     clear=True,
+  #     fg=(255, 255, 255),
+  #     bg=(0, 0, 0),
+  #   )
     
+  #   console.print(x + 1, y + 1, f'TAB) multi-spawn? [{self.multispawn}]')
+
+  #   if self.number_of_entities > 0:
+  #     # for i, entity in self.entity_enumerable:
+  #     for i, entity in enumerate(self.current_page_contents):
+  #       entity_key = chr(ord('a') + i)
+
+  #       entity_string = f'({entity_key}) {entity.name}'
+
+  #       console.print(x + 1, y + i + 2, entity_string)
+  #       # console.print(x + 1, y + i + 2, entity)
+  #   else:
+  #     console.print(x + 1, y + 1, '(Empty)')
 
 
   def on_render(self, console: tcod.Console) -> None:
     super().on_render(console)
+    # self.render_contents(console)
+    # print(self.number_of_entities)
 
     height = self.number_of_entities + 2
 
@@ -523,7 +575,7 @@ class SpawnerMenuHandler(AskUserEventHandler):
       for i, entity in enumerate(self.current_page_contents):
         entity_key = chr(ord('a') + i)
 
-        entity_string = f'({entity_key}) {entity.name}'
+        entity_string = f'({entity_key}) {entity[1].name}'
 
         console.print(x + 1, y + i + 2, entity_string)
         # console.print(x + 1, y + i + 2, entity)
@@ -536,13 +588,30 @@ class SpawnerMenuHandler(AskUserEventHandler):
     if key == tcod.event.KeySym.TAB:
       self.multispawn = not self.multispawn
       return None
+    elif key == tcod.event.KeySym.RIGHT:
+      self.page += 1
+      print(f'page: {self.page}')
+      if self.page > self.page_count:
+        print('rolling back to 1')
+        # self.page = 1
+        return SpawnerMenuHandler(self.engine, 1)
+      else:
+        return SpawnerMenuHandler(self.engine, self.page)
+      # self.render_contents()
+      # return None
+    elif key == tcod.event.KeySym.LEFT:
+      self.page -= 1
+      if self.page < 1:
+        self.page = self.page_count
+      self.render_contents()
+      return None
     else:
       index = key - tcod.event.KeySym.a
       if 0 <= index <= 26:
         try:
           # selected_item = player.inventory.items[index]
           # print(list(self.entity_enumerable))
-          entity_to_spawn = self.engine.entity_list[list(self.entity_enumerable)[index][1]]
+          entity_to_spawn = self.engine.entity_dict[self.entity_list[index][0]]
         except IndexError:
           self.engine.message_log.add_message('Invalid entry.', color.invalid)
           return None
