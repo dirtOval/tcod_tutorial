@@ -194,6 +194,8 @@ class Item(Entity):
       name: str = '<Unnamed>',
       consumable: Optional[Consumable] = None,
       equippable: Optional[Equippable] = None,
+      max_stack: int = 1,
+      amount: int = 1,
   ):
     super().__init__(
       x=x,
@@ -206,6 +208,8 @@ class Item(Entity):
     )
 
     self.consumable = consumable
+    self.max_stack = max_stack
+    self.amount = amount
     # self.consumable.parent = self
 
     if self.consumable:
@@ -215,6 +219,12 @@ class Item(Entity):
 
     if self.equippable:
       self.equippable.parent = self
+
+  def get_name(self) -> str:
+    if self.max_stack > 1:
+      return f'{self.name} [{self.amount}]'
+    else:
+      return self.name
 
   #trying to make stacks show up properly, doesnt work
   # def get_name(self) -> str:
