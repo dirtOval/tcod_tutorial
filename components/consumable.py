@@ -32,17 +32,20 @@ class Consumable(BaseComponent):
     entity = self.parent
     inventory = entity.parent
     if isinstance(inventory, components.inventory.Inventory):
-      inventory.items.remove(entity)
+      entity.amount -= 1
+      if entity.amount == 0:
+        inventory.items.remove(entity)
 
-class AmmoConsumable(Consumable):
-  def __init__(self, stack_size: int):
-    self.stack_size = stack_size
+#superfluous
+# class AmmoConsumable(Consumable):
+#   def __init__(self, stack_size: int):
+#     self.stack_size = stack_size
 
-  def consume(self) -> None:
-    if self.stack_size > 1:
-      self.stack_size -= 1
-    else:
-      super().consume()
+#   def consume(self) -> None:
+#     if self.stack_size > 1:
+#       self.stack_size -= 1
+#     else:
+#       super().consume()
 
 class ConfusionConsumable(Consumable):
   def __init__(self, number_of_turns: int):
