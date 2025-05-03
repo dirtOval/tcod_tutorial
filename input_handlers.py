@@ -800,15 +800,20 @@ class MainGameEventHandler(EventHandler):
     
     elif key == tcod.event.KeySym.KP_PERIOD:
       self.engine.auto_wait = not self.engine.auto_wait
+
+    elif key == tcod.event.KeySym.KP_DIVIDE:
+      items = self.engine.player.inventory.instances_of('Bow')
+      for item in items:
+        print(item.name)
     
     #auto-wait enable -- NOT WORKING
     # elif key == tcod.event.KeySym.KP_PERIOD:
     #   self.waiting = not self.waiting
       # return AutoWaitEventHandler(self.engine)
 
-    elif key == tcod.event.KeySym.KP_PLUS:
-      #open the spawner menu input handler
-      pass
+    # elif key == tcod.event.KeySym.KP_PLUS:
+    #   #open the spawner menu input handler
+    #   pass
 
     return action
   

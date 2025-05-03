@@ -21,3 +21,6 @@ class Inventory(BaseComponent):
 
   def clear(self) -> None:
     self.items = []
+
+  def instances_of(self, item_name):
+    return filter(lambda item: item.name == item_name, self.items)
